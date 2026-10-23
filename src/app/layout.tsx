@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense } from "react";
+import { AnnoyanceHost } from "@/annoyances/AnnoyanceHost";
 import { PainMeter } from "@/pain/PainMeter";
 import { PainProvider } from "@/pain/PainProvider";
 import "./globals.css";
@@ -26,6 +28,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <PainProvider>
           {children}
+          <Suspense>
+            <AnnoyanceHost />
+          </Suspense>
           <PainMeter />
         </PainProvider>
       </body>
