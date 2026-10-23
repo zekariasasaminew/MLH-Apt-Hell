@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePain } from "@/pain/PainProvider";
-import { TIERS } from "@/pain/pain-cookie";
 import styles from "./styles.module.css";
 
 type Appointment = { date: string; minutes: number };
@@ -11,8 +9,6 @@ function timeLabel(minutes: number) {
   return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 }
 export function TourScheduler({ listingId, street }: { listingId: string; street: string }) {
-  const { pain, ready } = usePain();
-  const analog = ready && pain >= TIERS.annoying;
   const [minutes, setMinutes] = useState(600);
   const [date, setDate] = useState("");
   const [review, setReview] = useState(false);
@@ -42,7 +38,7 @@ export function TourScheduler({ listingId, street }: { listingId: string; street
   if (saved) return <section className={styles.panel} aria-live="polite"><h2>Your simulated tour is requested</h2><p>{street}</p><p><time dateTime={`${saved.date}T${timeLabel(saved.minutes)}`}>{saved.date} at {timeLabel(saved.minutes)} (property local time)</time></p><p>Our imaginary agent has penciled you in using imaginary pencils. No booking was sent.</p><p>{storageWarning}</p><button onClick={() => { setDate(saved.date); setMinutes(saved.minutes); setSaved(null); }}>Schedule another pretend tour</button></section>;
   return <section className={styles.panel}><h2>Request a tour</h2><p>Choose a date and property-local time. This is a simulation.</p>
     <label>Tour date <input type="date" required value={date} onChange={e => { setDate(e.target.value); setReview(false); }} /></label>
-    {analog ? <><p>Rotate either hand. The minute hand also moves the hour hand. Apparently clocks still exist.</p>
+    <><p>Rotate either hand. The minute hand also moves the hour hand. Apparently clocks still exist.</p>
       <svg className={styles.clock} viewBox="0 0 300 300" role="group" aria-label="Analog appointment clock" onPointerDown={e => {
         const hand = (e.target as Element).getAttribute("data-hand");
         if (!hand) return;
@@ -62,8 +58,8 @@ export function TourScheduler({ listingId, street }: { listingId: string; street
         <circle cx="150" cy="150" r="10" fill="#ac5c22" pointerEvents="none" />
       </svg>
       <div>{[-60, -1, 1, 60].map(delta => <button key={delta} onClick={() => { setMinutes(m => wrap(m + delta)); setReview(false); }}>{delta > 0 ? "+" : ""}{delta} {Math.abs(delta) === 60 ? "min (hour hand)" : "min"}</button>)}<button onClick={() => { setMinutes(m => wrap(m + 720)); setReview(false); }}>Switch AM / PM</button></div>
-    </> : <label>Tour time <input type="time" value={timeLabel(minutes)} onChange={e => { if (!e.target.value) return; const [h, m] = e.target.value.split(":").map(Number); setMinutes(h * 60 + m); setReview(false); }} /></label>}
+    </>
     <p aria-live="polite">Selected: {date || "Choose a date"} at {timeLabel(minutes)} ({minutes < 720 ? "AM" : "PM"})</p>
-    {review ? <><p>Confirm that you have checked your calendar, your other calendar, and the calendar you ignore.</p><button onClick={save}>Confirm simulated tour for {date} at {timeLabel(minutes)}</button><button onClick={() => setReview(false)}>Back to clock</button></> : <button disabled={!date} onClick={() => analog ? setReview(true) : save()}>Request simulated tour</button>}
+    {review ? <><p>Confirm that you have checked your calendar, your other calendar, and the calendar you ignore.</p><button onClick={save}>Confirm simulated tour for {date} at {timeLabel(minutes)}</button><button onClick={() => setReview(false)}>Back to clock</button></> : <button disabled={!date} onClick={() => setReview(true)}>Request simulated tour</button>}
   </section>;
 }
