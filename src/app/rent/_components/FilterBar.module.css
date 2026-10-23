@@ -1,0 +1,64 @@
+.bar {
+  position: relative;
+  z-index: 20;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid #e8e8ec;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.save {
+  flex: none;
+  height: 40px;
+  padding: 8px 16px;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: var(--radius-sm);
+}
+
+.save:hover {
+  background: var(--blue-hover);
+}
+
+.menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu li > * {
+  display: block;
+  padding: 8px 4px;
+  font-size: 16px;
+}
+
+.menu a:hover {
+  color: var(--blue);
+}
+
+.current {
+  font-weight: 700;
+  color: var(--blue);
+}
+
+@media (max-width: 900px) {
+  .bar {
+    overflow-x: auto;
+    padding: 8px 12px;
+    scrollbar-width: none;
+  }
+
+  .bar::-webkit-scrollbar {
+    display: none;
+  }
+}

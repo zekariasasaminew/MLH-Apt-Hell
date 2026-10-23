@@ -11,7 +11,8 @@ const leftLinks = [
 ];
 
 const rightLinks = [
-  { label: "Manage rentals", href: "/signin" },
+  { label: "My account", href: "/account" },
+  { label: "Manage rentals", href: "/account" },
   { label: "Advertise", href: "/signin" },
   { label: "Get help", href: "/signin" },
 ];
@@ -42,3 +43,5 @@ export function SiteHeader() {
     </header>
   );
 }
+
+

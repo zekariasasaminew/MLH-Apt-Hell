@@ -1,0 +1,62 @@
+.banner {
+  position: relative;
+  z-index: 25;
+  font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive;
+  background: #000080;
+  color: #ffff00;
+  border-bottom: 4px ridge #ff00ff;
+}
+
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #00ff00;
+}
+
+.marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll 18s linear infinite;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 12px 4px;
+  font-size: 13px;
+}
+
+.construction {
+  padding: 1px 10px;
+  font-weight: 700;
+  color: #000;
+  background: repeating-linear-gradient(45deg, #ffd800 0 10px, #000 10px 20px);
+  background-clip: padding-box;
+  text-shadow: 0 0 3px #ffd800, 0 0 3px #ffd800;
+}
+
+.counter {
+  padding: 1px 8px;
+  font-family: "Courier New", monospace;
+  color: #00ff00;
+  background: #000;
+  border: 2px inset #808080;
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee span {
+    padding-left: 0;
+    animation: none;
+  }
+}

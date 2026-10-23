@@ -1,0 +1,13 @@
+.panel { max-width: 620px; margin: 28px auto; padding: 28px; border: 1px solid var(--border); border-radius: 12px; background: white; }
+.panel h2 { margin-bottom: 12px; }
+.panel p { margin: 12px 0; }
+.panel button, .panel input { padding: 9px 12px; margin: 8px 6px 8px 0; border: 1px solid var(--border); border-radius: 6px; }
+.panel button:disabled { opacity: .4; }
+.panel output { display: block; font-variant-numeric: tabular-nums; }
+.phone { position: relative; margin: 20px auto; width: 270px; height: 270px; padding: 20px; border-radius: 50%; background: #27221e; box-shadow: inset 0 0 15px black, 0 8px 15px #0003; }
+.ring { position: relative; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle, #352f29 42%, #b7a17b 44%, #746146 72%, #bba77f); }
+.panel .hole { position: absolute; width: 35px; height: 35px; margin: 0; padding: 0; transform: translate(-50%, -50%); border-radius: 50%; background: #151515; color: #fff5df; border: 2px solid #dac9a8; touch-action: none; font-size: 20px; }
+.center { position: absolute; top: 86px; left: 60px; width: 110px; text-align: center; font-size: 12px; color: #e6d9b9; pointer-events: none; }
+.stop { position: absolute; top: 4px; left: 98px; color: #e4c16c; font-size: 32px; }
+.returning { transition: transform .45s ease-out; }
+@media (prefers-reduced-motion: reduce) { .returning { transition: none; } }
