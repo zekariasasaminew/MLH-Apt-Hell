@@ -6,7 +6,7 @@ export default function ApplyPage() {
     <main className={styles.main}>
       <Placeholder route="/apply">
         <h1>Rental application</h1>
-        <p>Unclaimed. A multi-step application (fake, nothing is submitted anywhere). Peak pain lives here.</p>
+        <p>Unclaimed. A multi-step application (fake, nothing is submitted anywhere). Maximum misery lives here.</p>
       </Placeholder>
     </main>
   );

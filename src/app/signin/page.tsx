@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { usePain } from "@/pain/PainProvider";
 import { DEMO_PASSWORD, PASSWORD_RULES, validateRules } from "./password-rules";
 import styles from "./page.module.css";
 
 const STRENGTHS = ["Homeless", "Renting a cardboard box", "Studio with six roommates", "Hellow Dreamer", "Pre-approved by an imaginary bank", "Suburban homeowner", "Landlord with generational wealth", "Real Estate Mogul"];
 
 export default function SignInPage() {
-  const { bump } = usePain();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,10 +53,9 @@ export default function SignInPage() {
     const delay = demoMode ? 180 : 550;
     const timeout = setTimeout(() => {
       setVisibleCount((current) => Math.min(PASSWORD_RULES.length, current + (demoMode ? 5 : 2)));
-      bump(2);
     }, delay);
     return () => clearTimeout(timeout);
-  }, [allVisiblePassed, visibleCount, demoMode, bump]);
+  }, [allVisiblePassed, visibleCount, demoMode]);
 
   function updatePassword(value: string) {
     setPassword(value);
@@ -80,7 +77,6 @@ export default function SignInPage() {
     const next = appeals + 1;
     setAppeals(next);
     if (next >= 3) setExemptions(true);
-    bump(3);
   }
 
   function loadDemoPassword() {

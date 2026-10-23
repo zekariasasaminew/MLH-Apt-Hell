@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { usePain } from "@/pain/PainProvider";
 import { AVATARS, PERSONALITIES, VOICE_LINES } from "./data";
 import { CancelSubscriptionFlow } from "./CancelSubscriptionFlow";
 import styles from "./page.module.css";
@@ -63,7 +62,6 @@ const AMENITIES = [
 ];
 
 export default function AccountPage() {
-  const { bump } = usePain();
   const [active, setActive] = useState<Section>("Profile");
   const [draft, setDraft] = useState<Draft>(DEFAULT_DRAFT);
   const [saved, setSaved] = useState<Draft>(DEFAULT_DRAFT);
@@ -115,14 +113,12 @@ export default function AccountPage() {
 
   function patchDraft(patch: Partial<Draft>) {
     setDraft((current) => ({ ...current, ...patch }));
-    bump(2);
     if (!mascotMuted) setVoiceLine(VOICE_LINES[Math.floor(Math.random() * VOICE_LINES.length)]);
   }
 
   function verifyIdentity() {
     if (favoriteNumber !== "67" || !notAgents) {
       setVerificationError(favoriteNumber !== "67" ? "Incorrect. The sacred number has filed an appeal." : "The trench-coat declaration remains dangerously unsigned.");
-      bump(4);
       return;
     }
     setVerified(true);
@@ -133,7 +129,6 @@ export default function AccountPage() {
   function spinAlignment() {
     const result = PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)];
     setAlignment(result);
-    bump(3);
   }
 
   function confirmAvatar() {

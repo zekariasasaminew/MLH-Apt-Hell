@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TIERS } from "@/pain/pain-cookie";
 import type { Annoyance, AnnoyanceProps } from "../types";
 import styles from "./styles.module.css";
 
 const DELAY_MS = 4000;
+const INCREASE_PER_MONTH = 312;
 
-function RentWentUp({ pain, dismiss }: AnnoyanceProps) {
+function RentWentUp({ dismiss }: AnnoyanceProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -17,12 +17,10 @@ function RentWentUp({ pain, dismiss }: AnnoyanceProps) {
 
   if (!visible) return null;
 
-  const increase = 12 + pain * 3;
-
   return (
     <div className={styles.toast} role="status">
       <p>
-        <strong>Heads up:</strong> rent on homes you viewed went up ${increase}/mo since you got here.
+        <strong>Heads up:</strong> rent on homes you viewed went up ${INCREASE_PER_MONTH}/mo since you got here.
       </p>
       <button className={styles.close} onClick={dismiss} aria-label="Dismiss">
         ×
@@ -34,7 +32,6 @@ function RentWentUp({ pain, dismiss }: AnnoyanceProps) {
 const rentWentUp: Annoyance = {
   id: "rent-went-up",
   owner: "zekariasasaminew",
-  minPain: TIERS.mild,
   Component: RentWentUp,
 };
 

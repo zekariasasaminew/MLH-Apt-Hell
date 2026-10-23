@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Suspense } from "react";
 import { AnnoyanceHost } from "@/annoyances/AnnoyanceHost";
-import { PainMeter } from "@/pain/PainMeter";
-import { PainProvider } from "@/pain/PainProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,13 +24,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} ${displayFace.variable}`}>
       <body>
-        <PainProvider>
-          {children}
-          <Suspense>
-            <AnnoyanceHost />
-          </Suspense>
-          <PainMeter />
-        </PainProvider>
+        {children}
+        <Suspense>
+          <AnnoyanceHost />
+        </Suspense>
       </body>
     </html>
   );
