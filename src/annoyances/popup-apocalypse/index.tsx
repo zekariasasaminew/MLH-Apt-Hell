@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { TIERS } from "@/pain/pain-cookie";
 import type { Annoyance } from "../types";
 import styles from "./styles.module.css";
 
@@ -77,7 +76,7 @@ export function PopupManager() {
   const visible = ads.map((_, id) => id).filter(id => !session.closed.includes(id) && (id < stage || (id === 4 && session.closed.length > 0 && stage === 4))).slice(0, 4);
 
   return <>
-    {process.env.NODE_ENV === "development" && <button data-pain-ignore className={styles.demo} onClick={() => setSession({ elapsed: 300000, closed: [], started: true })}>Demo popup apocalypse</button>}
+    {process.env.NODE_ENV === "development" && <button className={styles.demo} onClick={() => setSession({ elapsed: 300000, closed: [], started: true })}>Demo popup apocalypse</button>}
     {triggered && visible.map(id => <aside key={id} role="region" aria-label={ads[id][0]} className={`${styles.popup} ${styles[`position${id}`]}`} style={id === 2 ? { transform: `translate(${offset.x}px, ${offset.y}px)` } : undefined}>
       <small>Fictional sponsored interruption</small><h2>{ads[id][0]}</h2><p>{ads[id][1]}</p>
       {id === 0 && <><p>Our close button is practicing social distancing.</p><div className={styles.runway}><button aria-label="Close Premium Hellow advertisement" style={{ marginLeft: attempts < 4 ? `${(attempts % 3) * 28}%` : 0 }} onPointerEnter={e => { if (e.pointerType === "mouse") setAttempts(n => Math.min(n + 1, 4)); }} onClick={() => close(id)}>×</button></div></>}
@@ -91,5 +90,5 @@ export function PopupManager() {
   </>;
 }
 
-const popupApocalypse: Annoyance = { id: "popup-apocalypse", owner: "fiatbruno", minPain: TIERS.calm, Component: PopupManager };
+const popupApocalypse: Annoyance = { id: "popup-apocalypse", owner: "fiatbruno", Component: PopupManager };
 export default popupApocalypse;

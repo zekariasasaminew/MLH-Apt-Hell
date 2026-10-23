@@ -2,21 +2,16 @@
 
 import Link from "next/link";
 import type { FilterControlProps } from "@/filters/useRentFilters";
-import type { RentEffects } from "../_lib/rent-pain";
 import { FilterPopover } from "./FilterPopover";
-import { BedsBathsFilter } from "./filters/BedsBathsFilter";
 import { LocationFilter } from "./filters/LocationFilter";
-import { MoreFilters } from "./filters/MoreFilters";
 import { PriceFilter } from "./filters/PriceFilter";
-import { PropertyTypeFilter } from "./filters/PropertyTypeFilter";
 import styles from "./FilterBar.module.css";
 
 type Props = FilterControlProps & {
-  effects: RentEffects;
   onSaveSearch: () => void;
 };
 
-export function FilterBar({ filters, setFilters, effects, onSaveSearch }: Props) {
+export function FilterBar({ filters, setFilters, onSaveSearch }: Props) {
   return (
     <div className={styles.bar} data-rent="filterbar">
       <LocationFilter filters={filters} setFilters={setFilters} />
@@ -34,13 +29,6 @@ export function FilterBar({ filters, setFilters, effects, onSaveSearch }: Props)
         </ul>
       </FilterPopover>
       <PriceFilter filters={filters} setFilters={setFilters} />
-      {!effects.filtersAsForm && (
-        <>
-          <BedsBathsFilter filters={filters} setFilters={setFilters} weirdBeds={effects.weirdBeds} />
-          <PropertyTypeFilter filters={filters} setFilters={setFilters} />
-          <MoreFilters filters={filters} setFilters={setFilters} />
-        </>
-      )}
       <div className={styles.spacer} />
       <button type="button" className={styles.save} onClick={onSaveSearch}>
         Save search

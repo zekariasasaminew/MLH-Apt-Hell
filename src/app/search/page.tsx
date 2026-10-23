@@ -13,7 +13,7 @@ export default function SearchPage({ searchParams }: PageProps<"/search">) {
           <Suspense fallback={<p>Loading your query…</p>}>
             <Query searchParams={searchParams} />
           </Suspense>
-          <p>Unclaimed. Map + list of listings from src/data/listings.ts, with filters that get worse with pain.</p>
+          <p>Unclaimed. Map + list of listings from src/data/listings.ts, with filters that fight back.</p>
         </Placeholder>
       </main>
     </>

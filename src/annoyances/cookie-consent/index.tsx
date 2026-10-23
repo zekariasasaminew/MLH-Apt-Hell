@@ -1,10 +1,12 @@
 "use client";
 
-import { TIERS } from "@/pain/pain-cookie";
+import { useState } from "react";
 import type { Annoyance, AnnoyanceProps } from "../types";
 import styles from "./styles.module.css";
 
-function CookieConsent({ bump, dismiss }: AnnoyanceProps) {
+function CookieConsent({ dismiss }: AnnoyanceProps) {
+  const [loadingPreferences, setLoadingPreferences] = useState(false);
+
   return (
     <div className={styles.banner} role="dialog" aria-label="Cookie consent">
       <p className={styles.text}>
@@ -12,8 +14,8 @@ function CookieConsent({ bump, dismiss }: AnnoyanceProps) {
         use of cookies.
       </p>
       <div className={styles.actions}>
-        <button className={styles.secondary} onClick={() => bump(5)}>
-          Manage preferences
+        <button className={styles.secondary} onClick={() => setLoadingPreferences(true)} disabled={loadingPreferences}>
+          {loadingPreferences ? "Loading 847 preferences…" : "Manage preferences"}
         </button>
         <button className={styles.primary} onClick={dismiss}>
           Accept all
@@ -26,8 +28,6 @@ function CookieConsent({ bump, dismiss }: AnnoyanceProps) {
 const cookieConsent: Annoyance = {
   id: "cookie-consent",
   owner: "zekariasasaminew",
-  minPain: TIERS.calm,
-  maxPain: TIERS.annoying,
   Component: CookieConsent,
 };
 
