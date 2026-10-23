@@ -12,6 +12,7 @@ export type FilterControlProps = {
 
 /**
  * Rent filters, kept in the URL so back, forward, refresh and shared links all work.
+ * Each change pushes a history entry, so Back steps through earlier filters.
  * The component using this must sit inside a <Suspense> boundary.
  */
 export function useRentFilters() {
@@ -22,21 +23,21 @@ export function useRentFilters() {
 
   const filters = useMemo(() => parseRentFilters(new URLSearchParams(query)), [query]);
 
-  const replace = useCallback(
+  const navigate = useCallback(
     (next: RentFilters) => {
       const qs = toSearchParams(next).toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
     [router, pathname],
   );
 
   /** Merges a patch into the current filters. Resets to page 1 unless the patch sets `page`. */
   const setFilters = useCallback(
-    (patch: Partial<RentFilters>) => replace({ ...filters, page: 1, ...patch }),
-    [filters, replace],
+    (patch: Partial<RentFilters>) => navigate({ ...filters, page: 1, ...patch }),
+    [filters, navigate],
   );
 
-  const clearFilters = useCallback(() => replace({ ...DEFAULT_FILTERS, sort: filters.sort }), [filters.sort, replace]);
+  const clearFilters = useCallback(() => navigate({ ...DEFAULT_FILTERS, sort: filters.sort }), [filters.sort, navigate]);
 
   return { filters, setFilters, clearFilters };
 }
