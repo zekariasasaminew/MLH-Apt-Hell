@@ -7,9 +7,59 @@
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--blue);
+  transition: color 180ms ease, filter 180ms ease, text-shadow 180ms ease;
 }
 
 .mark {
   width: 1em;
   height: 1em;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 180ms ease;
 }
+
+.hell {
+  color: #d8160f;
+  filter: drop-shadow(0 0 0.12em #ff5a00);
+  text-shadow: 0.045em 0.045em 0 #5b0000;
+  animation: hellPulse 700ms steps(2, end) infinite;
+}
+
+.hell .mark {
+  transform: translateY(-0.04em) scale(1.13) rotate(-2deg);
+}
+
+.horn {
+  stroke: #790000;
+}
+
+.flame {
+  fill: #ff8a00;
+  stroke: #b50909;
+  stroke-width: 1.7;
+  animation: flameFlicker 360ms ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+
+@keyframes hellPulse {
+  0%, 100% { color: #d8160f; }
+  50% { color: #ff4d00; }
+}
+
+@keyframes flameFlicker {
+  from { transform: scaleX(0.9) skewX(-3deg); }
+  to { transform: scaleX(1.08) skewX(4deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hell,
+  .flame {
+    animation: none;
+  }
+}
+
+
