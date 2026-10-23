@@ -1,13 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { usePain } from "@/pain/PainProvider";
-import { TIERS } from "@/pain/pain-cookie";
 import styles from "./styles.module.css";
 
 export function RotaryContact() {
-  const { pain, ready } = usePain();
-  const rotary = ready && pain >= TIERS.annoying;
   const [number, setNumber] = useState("");
   const [muted, setMuted] = useState(true);
   const [rotation, setRotation] = useState(0);
@@ -37,7 +33,7 @@ export function RotaryContact() {
   }
   return <section className={styles.panel}>
     <h2>Contact the agent</h2><p>Simulated request. Use an imaginary 10-digit number; it stays on this page.</p>
-    {rotary ? <>
+    <>
       <p>Drag a numbered hole clockwise to the brass stop, then release. Keyboard: focus a digit and press Enter.</p>
       <button type="button" onClick={() => setMuted(m => !m)}>Sound: {muted ? "muted" : "on"}</button>
       <div ref={dial} className={styles.phone}>
@@ -60,7 +56,7 @@ export function RotaryContact() {
       </div>
       <output aria-live="polite">{number || "No digits dialed"} ({number.length}/10)</output>
       <button type="button" onClick={() => { setNumber(""); setMessage("The operator erased the entire number. Please redial."); }}>Ask operator to erase mistakes (all digits)</button>
-    </> : <label>Imaginary phone number <input inputMode="numeric" value={number} maxLength={10} onChange={e => { setNumber(e.target.value.replace(/\D/g, "").slice(0, 10)); setMessage(""); }} /></label>}
+    </>
     <button type="button" disabled={number.length !== 10} onClick={() => setMessage("Request simulated! Our agent will call you back sometime between yesterday and the heat death of the universe.")}>Request a pretend callback</button>
     <p role="status">{message}</p>
   </section>;

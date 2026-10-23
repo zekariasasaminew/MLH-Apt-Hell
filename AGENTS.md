@@ -105,7 +105,7 @@ For things that float above any page, add an annoyance:
 `dismiss()` hides it until the next page view; it comes back after that (on purpose). If you need it to stay gone,
 store that in your own cookie named `hellow_<your-id>`.
 
-The `popup-apocalypse` manager is mounted at the calm tier to track active session time. It shows no ads until
+The `popup-apocalypse` manager is always mounted to track active session time. It shows no ads until
 five minutes of visible-tab use after the first interaction. Its timer and completed dismissals use sessionStorage
 (`hellow_popup-apocalypse`) across navigation; at most four fictional ads appear at once. In development, use
 the “Demo popup apocalypse” button to trigger/reset it immediately. Every ad has an accessible dismissal.
