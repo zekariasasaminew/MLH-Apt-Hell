@@ -3,6 +3,7 @@ import { Placeholder } from "@/components/site/Placeholder";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatRent, getListing, listings } from "@/data/listings";
 import styles from "./page.module.css";
+import { RotaryContact } from "../rotary-contact/RotaryContact";
 
 export function generateStaticParams() {
   return listings.map((listing) => ({ id: listing.id }));
@@ -24,6 +25,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
           </p>
           <p>Unclaimed. Photo gallery, details, &quot;Request a tour&quot; and &quot;Apply now&quot; (links to /apply).</p>
         </Placeholder>
+        <RotaryContact />
       </main>
     </>
   );

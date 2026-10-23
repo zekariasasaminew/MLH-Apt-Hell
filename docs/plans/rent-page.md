@@ -1,7 +1,16 @@
 # Plan: the Rent page (`/rent`)
 
-Owner: zekariasasaminew. Status: **approved, in progress** (PR A built). All five decisions in section 2 went with
-the recommendation, so the **[DECIDE]** items below are settled.
+Owner: zekariasasaminew. Status: **built** (PR A merged, phases B to D shipped together in one PR). All five
+decisions in section 2 went with the recommendation, so the **[DECIDE]** items below are settled.
+
+Deviations from the plan as built:
+- Map tiles are OpenStreetMap's standard tiles. CARTO Voyager now stamps "API KEY REQUIRED" on its tiles.
+- On phones the filter pills scroll horizontally (like Zillow's own mobile bar) instead of collapsing into a sheet;
+  popovers open full width under the bar, and a floating Map / List button switches panes.
+- The hostile "filters become a form" keeps the location and price controls visible so the teammates' globe and
+  slot machine stay reachable; the other pills become one 31-checkbox form.
+- Every pain effect lives in `rent-pain.ts` (thresholds) plus one file per effect in `_effects/`, or in
+  `ResultsGrid.tsx` for per-card ones.
 
 Builder: read `AGENTS.md` first, then this whole file. Work through the phases in order, one PR per phase.
 

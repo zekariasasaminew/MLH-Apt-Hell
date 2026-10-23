@@ -1,0 +1,45 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 24px 20px;
+}
+
+.page,
+.step {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--blue);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+}
+
+.page:hover,
+.step:hover:not(:disabled) {
+  background: #f0f5ff;
+}
+
+.current {
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--surface-grey);
+}
+
+.step {
+  font-size: 22px;
+}
+
+.step:disabled {
+  color: var(--border);
+  cursor: default;
+}
+
+.gap {
+  padding: 0 4px;
+  color: var(--ink-muted);
+}

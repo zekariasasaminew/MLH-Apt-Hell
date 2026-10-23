@@ -1,0 +1,49 @@
+.geo,
+.geo * {
+  font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive !important;
+}
+
+.geo [data-rent="listpane"] {
+  background: repeating-conic-gradient(#ffff66 0 25%, #66ffff 0 50%) 0 0 / 36px 36px;
+}
+
+.geo [data-rent="filterbar"] {
+  background: #c0c0c0;
+  border-bottom: 4px ridge #ffffff;
+}
+
+.geo [data-rent="card"] {
+  background: #ffffcc;
+  border: 4px ridge #ff00ff;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.geo [data-rent="card"] address,
+.geo [data-rent="card"] span,
+.geo [data-rent="card"] div {
+  color: #000080;
+}
+
+.geo h1,
+.geo h2 {
+  color: #ff00ff;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.geo h1 {
+  font-size: 28px;
+}
+
+.geo [data-rent="map"] {
+  border: 4px inset #808080;
+}
+
+.geo a {
+  color: #0000ff;
+  text-decoration: underline;
+}
+
+.geo button {
+  border-radius: 0 !important;
+}
