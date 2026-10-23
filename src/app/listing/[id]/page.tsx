@@ -3,6 +3,7 @@ import { Placeholder } from "@/components/site/Placeholder";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatRent, getListing, listings } from "@/data/listings";
 import styles from "./page.module.css";
+import { ScratchGallery } from "../scratch-photos/ScratchGallery";
 
 export function generateStaticParams() {
   return listings.map((listing) => ({ id: listing.id }));
@@ -17,6 +18,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
     <>
       <SiteHeader />
       <main className={styles.main}>
+        <ScratchGallery listing={listing} />
         <Placeholder route={`/listing/${id}`}>
           <h1>{listing.street}</h1>
           <p>
