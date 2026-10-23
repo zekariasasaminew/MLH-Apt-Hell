@@ -15,26 +15,26 @@ If you change how a shared system works, update this file in the same PR.
 
 ## What we are building
 
-**Hellow** is a parody of Zillow for an MLH hackathon. The landing page looks like Zillow's homepage: clean, calm,
-trustworthy. Then, the more someone uses the site, the more frustrating it gets, until it is absurd.
+**Hellow** is a parody of Zillow for an MLH hackathon. The landing page looks like Zillow's homepage, and every flow
+behind it is as frustrating as we can make it.
 
 Product rules:
 
-1. **Start clean, end absurd.** A first-time visitor must see a polished, believable rental site. Frustration ramps
-   up with the **pain level** (see below), never all at once.
-2. **Frustration is everywhere.** Every page and every flow should have ways to get worse: search, listings,
-   sign-in, the application, the footer, everything.
-3. **Pages do not need to match each other.** Inconsistent UI is itself one of the annoyances. A page can switch
-   fonts, colors or layout entirely once pain is high, or simply look like it was built by a different company.
-   The homepage stays Zillow-like at low pain.
+1. **Maximum annoyance, always.** There are no levels, no settings and no ramp. Every annoyance is on from the first
+   page load, so build each one at full strength.
+2. **Frustration is everywhere.** Every page and every flow should be hostile: search, listings, sign-in, the
+   application, the footer, everything.
+3. **Pages do not need to match each other.** Inconsistent UI is itself one of the annoyances. A page can use its
+   own fonts, colors or layout, or simply look like it was built by a different company. The homepage keeps its
+   Zillow look and is the bait.
 4. **It must stay demoable.** Annoying, never broken. See "Hard limits".
 
 ## Stack
 
 - Next.js 16 (App Router, Turbopack, **Cache Components enabled**), React 19, TypeScript.
 - Plain CSS Modules plus the tokens in `src/app/globals.css`. No Tailwind, no UI libraries unless the team agrees.
-- **No database, no backend services.** State lives in cookies (and in-memory React state). Nothing is ever
-  submitted anywhere real.
+- **No database, no backend services.** State lives in the URL, cookies you name yourself, and in-memory React
+  state. Nothing is ever submitted anywhere real.
 - Fake data lives in `src/data/listings.ts`. Photos come from `images.unsplash.com` via `next/image`.
 - Deployed on Vercel. Every PR gets a preview URL.
 
@@ -42,7 +42,7 @@ Commands:
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000, the pain meter shows bottom-left
+npm run dev      # http://localhost:3000
 npm run build    # the only CI check; must pass before you open a PR
 ```
 
@@ -51,7 +51,7 @@ npm run build    # the only CI check; must pass before you open a PR
 ```
 src/
   app/
-    layout.tsx              root layout: PainProvider, AnnoyanceHost, PainMeter (shared, edit rarely)
+    layout.tsx              root layout: AnnoyanceHost (shared, edit rarely)
     globals.css             design tokens (shared, edit rarely)
     page.tsx                homepage (Zillow clone)
     rent/                   /rent              rental search results (zekariasasaminew)
@@ -62,14 +62,10 @@ src/
   components/
     site/                   shared Zillow chrome: SiteHeader, SiteFooter, Logo, ListingCard, Placeholder
     home/                   homepage-only sections
-  pain/
-    pain-cookie.ts          cookie name, TIERS, per-click / per-page-view amounts
-    PainProvider.tsx        usePain() hook
-    PainMeter.tsx           dev overlay
   annoyances/
     types.ts                Annoyance type + route matching
     registry.ts             list of every annoyance (one line each)
-    AnnoyanceHost.tsx       renders active annoyances
+    AnnoyanceHost.tsx       renders every annoyance whose routes match
     <annoyance-id>/         one folder per annoyance
   filters/
     rent-filters.ts         RentFilters type, parse / serialize / apply / paginate (pure)
@@ -77,50 +73,18 @@ src/
   data/listings.ts          60 fake Quad Cities rentals + the cities list
 ```
 
-## The pain system
+## Annoyance model
 
-A single number from 0 to 100 stored in the `hellow_pain` cookie (30 day expiry).
-
-- Every click anywhere: **+1**. Every page view (route change): **+3**. Values live in `src/pain/pain-cookie.ts`.
-- Anything can add more with `bump(n)`, e.g. submitting a form, opening a dropdown, failing a captcha.
-- Clicks inside an element with the `data-pain-ignore` attribute do not count.
-
-Shared tiers (always use these instead of magic numbers):
-
-| Tier       | Pain | Feel                                                         |
-|------------|------|--------------------------------------------------------------|
-| `calm`     | 0    | Looks exactly like Zillow. At most a normal cookie banner.   |
-| `mild`     | 10   | Small, plausible annoyances. "Huh, that's a bit much."       |
-| `annoying` | 30   | Clearly hostile UX patterns.                                 |
-| `hostile`  | 60   | The site is actively fighting the user.                      |
-| `unhinged` | 90   | Absurd. Layout falls apart, nothing behaves.                 |
-
-Reading pain in a page or component (client component only):
-
-```tsx
-"use client";
-import { usePain } from "@/pain/PainProvider";
-import { TIERS } from "@/pain/pain-cookie";
-
-export function ApplyButton() {
-  const { pain, ready, bump } = usePain();
-  const evasive = ready && pain >= TIERS.annoying;
-  // ...
-}
-```
-
-`ready` is false during server render and until the cookie is read. Render the calm version until `ready` is true,
-otherwise you get hydration mismatches.
-
-Testing: the **PainMeter** (bottom-left in `npm run dev`, or Ctrl+Shift+P on a deployed site) shows the level and has
-+10 / -10 / reset buttons. You can also set the cookie by hand: `document.cookie = "hellow_pain=75; path=/"`.
+There is no pain level, no tier and no configuration. Every annoyance is always on at full strength, from the first
+page load. Don't add a setting, a cookie-driven ramp or a gentler variant; if you are tempted to build a milder
+version of something, build the harsher one instead.
 
 ## Two ways to add frustration
 
-### 1. In-page degradation (most work goes here)
+### 1. In-page hostility (most work goes here)
 
-Inside the page or component you own, call `usePain()` and change behavior by tier: move buttons, reorder fields,
-change copy, swap styles, add steps. This is how you make a specific page worse.
+Inside the page or component you own, make the thing hostile by default: move buttons, reorder fields, change copy,
+swap styles, add steps. This is how you make a specific page worse.
 
 ### 2. Global annoyances (overlays, popups, toasts, banners)
 
@@ -132,10 +96,8 @@ For things that float above any page, add an annoyance:
    const myAnnoyance: Annoyance = {
      id: "my-annoyance",          // same as the folder name
      owner: "your-github-handle",
-     minPain: TIERS.annoying,     // shows from here
-     maxPain: TIERS.unhinged,     // optional: stops here (replace it with something worse)
      routes: ["/listing/*"],      // optional: "/x" exact, "/x/*" prefix; omit for every page
-     Component: MyAnnoyance,      // receives { pain, bump, dismiss }
+     Component: MyAnnoyance,      // receives { dismiss }
    };
    ```
 3. Add one import and one line to `src/annoyances/registry.ts`, keeping the list alphabetical.
@@ -154,26 +116,26 @@ the “Demo popup apocalypse” button to trigger/reset it immediately. Every ad
   `page/apply-step-2`.
 - **Stay in your lane.** Edit only the folders your issue is about. Each page and annoyance has its own folder and
   CSS module so PRs don't collide.
-- **Shared files** (`layout.tsx`, `globals.css`, `pain/*`, `annoyances/types.ts`, `components/site/*`,
+- **Shared files** (`layout.tsx`, `globals.css`, `annoyances/types.ts`, `components/site/*`,
   `data/listings.ts`): keep changes small and additive. Don't rename or reformat things other people use. If you
   must change a shared API, say so in the PR description and update this file.
 - **`registry.ts` is the one place everyone touches.** One line per annoyance, alphabetical, so merges stay trivial.
 - Never push to `main`. It is protected; everything goes through a PR.
 - Before opening a PR: `git fetch && git rebase origin/main`, then `npm run build`. CI runs the same build.
-- Small commits, imperative messages that say why ("Make the apply button dodge the cursor at hostile pain").
+- Small commits, imperative messages that say why ("Make the apply button dodge the cursor").
 - No new dependencies without telling the team in the PR description.
 
-## How /rent escalates
+## What /rent does
 
-`src/app/rent/_lib/rent-pain.ts` has one pure function, `rentEffects(pain)`, that returns a flag per effect. Change a
-threshold there and nothing else. `RentPage.tsx` calls `usePain()` once, computes the effects (all off until the
-cookie is read) and passes them down. Effects stack: everything from lower tiers stays on.
+Every effect is always on. Nothing is configurable.
 
-- Page-level effects: `RentPage.tsx` (expensive-first sort, lying pagination, sponsored filler, self-sorting list,
-  filter amnesia), `FilterBar.tsx` / `ResultsHeader.tsx` (inflated count, form-style filters).
-- Per-card effects: `_components/ResultsGrid.tsx` (price creep, ghost listings, urgency badges, income gate, tags).
+- Page-level effects: `RentPage.tsx` (expensive-first sort, page 2 repeats page 1, sponsored filler, self-sorting
+  list, filter amnesia, every card links to one listing), `ResultsHeader.tsx` (inflated count), `Pagination.tsx`
+  (fake "412" pages), `RentMap.tsx` (grayscale map, swapped zoom buttons, shy pins).
+- Per-card effects: `_components/ResultsGrid.tsx` (price creep, ghost listings, urgency badges, income gate, tags,
+  sagging cards).
 - One file per standalone effect in `src/app/rent/_effects/` (save-search modal, income calculator, filters form,
-  Geocities banner). The unhinged restyle is `unhinged.module.css`, targeting `data-rent="..."` attributes.
+  Geocities banner). The Geocities restyle is `geocities.module.css`, targeting `data-rent="..."` attributes.
 - Randomness is seeded (`_lib/seeded-random.ts`) so a demo repeats. Modals close on Escape, nothing touches the
   history stack, and moving effects check `prefers-reduced-motion`.
 - Map: Leaflet with OpenStreetMap tiles, loaded client-only (`RentMapLoader.tsx`). Keep the attribution.
@@ -212,7 +174,5 @@ and shared links work. Never keep filter state anywhere else.
 - **Cache Components is on.** Reading `cookies()`, `headers()`, `searchParams` or `params` in a server component
   must happen inside a `<Suspense>` boundary (see `src/app/search/page.tsx`), or come from `generateStaticParams`
   (see `src/app/listing/[id]/page.tsx`). Otherwise the build fails.
-- Pain is client-side. If a server component needs it, read the `hellow_pain` cookie with `cookies()` inside
-  Suspense and parse it with `parsePain()` from `src/pain/pain-cookie.ts`.
 - `next/image` from new hosts needs an entry in `images.remotePatterns` in `next.config.ts`.
 - Typed route props: use the global `PageProps<"/route">` and `LayoutProps<"/route">` helpers.
