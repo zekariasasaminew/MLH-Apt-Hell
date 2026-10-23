@@ -4,7 +4,7 @@ import styles from "./SiteHeader.module.css";
 
 const leftLinks = [
   { label: "Buy", href: "/search?type=buy" },
-  { label: "Rent", href: "/search?type=rent" },
+  { label: "Rent", href: "/rent" },
   { label: "Sell", href: "/search?type=sell" },
   { label: "Get a mortgage", href: "/apply" },
   { label: "Find an agent", href: "/search?type=agent" },

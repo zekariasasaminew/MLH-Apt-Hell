@@ -54,7 +54,8 @@ src/
     layout.tsx              root layout: PainProvider, AnnoyanceHost, PainMeter (shared, edit rarely)
     globals.css             design tokens (shared, edit rarely)
     page.tsx                homepage (Zillow clone)
-    search/                 /search            (unclaimed placeholder)
+    rent/                   /rent              rental search results (zekariasasaminew)
+    search/                 /search            (unclaimed placeholder, meant for Buy)
     listing/[id]/           /listing/:id       (unclaimed placeholder)
     signin/                 /signin            (unclaimed placeholder)
     apply/                  /apply             (unclaimed placeholder)
@@ -70,7 +71,10 @@ src/
     registry.ts             list of every annoyance (one line each)
     AnnoyanceHost.tsx       renders active annoyances
     <annoyance-id>/         one folder per annoyance
-  data/listings.ts          22 fake Quad Cities rentals
+  filters/
+    rent-filters.ts         RentFilters type, parse / serialize / apply / paginate (pure)
+    useRentFilters.ts       URL-backed filter hook + FilterControlProps
+  data/listings.ts          60 fake Quad Cities rentals + the cities list
 ```
 
 ## The pain system
@@ -153,6 +157,25 @@ store that in your own cookie named `hellow_<your-id>`.
 - Before opening a PR: `git fetch && git rebase origin/main`, then `npm run build`. CI runs the same build.
 - Small commits, imperative messages that say why ("Make the apply button dodge the cursor at hostile pain").
 - No new dependencies without telling the team in the PR description.
+
+## The rent filter contract
+
+All /rent filters live in the URL query string (`?city=moline-il&max=1200&sort=price-asc&page=2`), so Back, refresh
+and shared links work. Never keep filter state anywhere else.
+
+- `src/filters/rent-filters.ts`: pure functions, safe on server and client. `parseRentFilters`, `toSearchParams`,
+  `applyRentFilters`, `paginate`, `PAGE_SIZE`.
+- `src/filters/useRentFilters.ts`: client hook returning `{ filters, setFilters, clearFilters }`. `setFilters(patch)`
+  merges a patch, resets to page 1 unless the patch sets `page`, and pushes a history entry. Call it from a component
+  inside a `<Suspense>` boundary.
+- Swappable controls live in their own files and all take `FilterControlProps` (`{ filters, setFilters }`):
+  - `src/app/rent/_components/filters/PriceFilter.tsx`: the slot machine (#9) replaces this.
+  - `src/app/rent/_components/filters/LocationFilter.tsx`: the globe (#5) replaces this.
+
+  Replace the file's contents, keep the exported name and props, and call `setFilters({ maxRent })` or
+  `setFilters({ city })` when the user confirms. Changing the props or the `RentFilters` shape is a contract change:
+  say so in the PR and update this section.
+- City slugs and the city list come from `cities` in `src/data/listings.ts`.
 
 ## Hard limits (keep it demoable and safe)
 
