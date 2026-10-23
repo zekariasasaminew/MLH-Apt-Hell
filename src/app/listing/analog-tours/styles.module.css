@@ -1,0 +1,7 @@
+.panel { max-width: 640px; padding: 28px; margin: 28px auto; border: 1px solid var(--border); border-radius: 14px; background: white; }
+.panel p { margin: 12px 0; }
+.panel input, .panel button { padding: 10px; margin: 6px; border: 1px solid var(--border); border-radius: 6px; background: #f5f8ff; }
+.panel button:disabled { opacity: .4; }
+.panel label { display: block; }
+.clock { display: block; width: min(300px, 100%); margin: 20px auto; touch-action: none; }
+.clock line { cursor: grab; }

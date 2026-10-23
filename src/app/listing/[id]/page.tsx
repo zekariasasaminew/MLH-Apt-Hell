@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Placeholder } from "@/components/site/Placeholder";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatRent, getListing, listings } from "@/data/listings";
+import { TourScheduler } from "../analog-tours/TourScheduler";
 import styles from "./page.module.css";
 import { RotaryContact } from "../rotary-contact/RotaryContact";
 
@@ -25,6 +26,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
           </p>
           <p>Unclaimed. Photo gallery, details, &quot;Request a tour&quot; and &quot;Apply now&quot; (links to /apply).</p>
         </Placeholder>
+        <TourScheduler key={id} listingId={id} street={listing.street} />
         <RotaryContact />
       </main>
     </>
