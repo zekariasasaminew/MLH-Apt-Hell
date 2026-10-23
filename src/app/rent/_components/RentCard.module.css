@@ -1,0 +1,252 @@
+.card {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-listing);
+  transition: box-shadow 150ms ease-out, outline-color 150ms ease-out;
+  outline: 2px solid transparent;
+}
+
+.card:hover,
+.highlighted {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.highlighted {
+  outline-color: var(--blue);
+}
+
+.photo {
+  position: relative;
+  height: 186px;
+  overflow: hidden;
+  background: var(--surface-grey);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.photo img {
+  object-fit: cover;
+}
+
+.badges {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  left: 8px;
+  right: 56px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.badge {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  border-radius: 999px;
+}
+
+.orange {
+  color: #fff;
+  background: var(--badge-orange);
+}
+
+.blue {
+  color: #fff;
+  background: var(--blue);
+}
+
+.white {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.promoted {
+  color: #fff;
+  background: var(--ink);
+}
+
+.heart {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+}
+
+.arrow {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+  border: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.prev {
+  left: 8px;
+}
+
+.next {
+  right: 8px;
+}
+
+.card:hover .arrow,
+.arrow:focus-visible {
+  opacity: 1;
+}
+
+.dots {
+  position: absolute;
+  z-index: 2;
+  bottom: 8px;
+  left: 50%;
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateX(-50%);
+}
+
+.dot,
+.dotOn {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.dotOn {
+  background: #fff;
+}
+
+.body {
+  padding: 8px 12px 12px;
+}
+
+.priceRow {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 26px;
+}
+
+.fees {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.fees[data-swap] .feesHover {
+  display: none;
+  font-weight: 700;
+  color: var(--badge-orange);
+}
+
+.card:hover .fees[data-swap] .feesHover {
+  display: inline;
+}
+
+.card:hover .fees[data-swap] .feesDefault {
+  display: none;
+}
+
+.menuWrap {
+  position: relative;
+  z-index: 2;
+  margin-left: auto;
+}
+
+.more {
+  padding: 0 4px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--blue);
+  background: transparent;
+  border: 0;
+  letter-spacing: 1px;
+}
+
+.menu {
+  position: absolute;
+  top: 24px;
+  right: 0;
+  z-index: 5;
+  min-width: 160px;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.menu button {
+  width: 100%;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+}
+
+.menu button:hover {
+  background: var(--surface-grey);
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.details span + span {
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid var(--border);
+}
+
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.address {
+  font-size: 14px;
+  font-style: normal;
+  line-height: 24px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

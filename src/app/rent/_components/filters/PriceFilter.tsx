@@ -1,22 +1,68 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { FilterControlProps } from "@/filters/useRentFilters";
 import { applyRentFilters } from "@/filters/rent-filters";
 import { listings } from "@/data/listings";
 import { usePain } from "@/pain/PainProvider";
 import { TIERS } from "@/pain/pain-cookie";
-import styles from "./PriceFilter.module.css";
+import slotStyles from "./PriceFilter.module.css";
+import type { FilterControlProps } from "@/filters/useRentFilters";
+import { FilterPopover } from "../FilterPopover";
+import styles from "./filters.module.css";
 
 const STEPS = Array.from({ length: 50 }, (_, i) => (i + 1) * 100);
-export function PriceFilter(props: FilterControlProps) {
-  const { pain, ready } = usePain();
-  return <fieldset className={styles.control}><legend>Price</legend>
-    <label>Minimum rent <select value={props.filters.minRent ?? ""} onChange={e => props.setFilters({ minRent: e.target.value ? Number(e.target.value) : undefined })}><option value="">No min</option>{STEPS.map(n => <option key={n} value={n}>${n.toLocaleString("en-US")}</option>)}</select></label>
-    {ready && pain >= TIERS.annoying ? <SlotMachine key={props.filters.maxRent ?? "none"} {...props} /> : <label>Maximum rent <select value={props.filters.maxRent ?? ""} onChange={e => props.setFilters({ maxRent: e.target.value ? Number(e.target.value) : undefined })}><option value="">No max</option>{STEPS.map(n => <option key={n} value={n}>${n.toLocaleString("en-US")}</option>)}</select></label>}
-    <p>Confirmed maximum: {props.filters.maxRent === undefined ? "No maximum" : `$${props.filters.maxRent.toLocaleString("en-US")}/month`}</p>
-  </fieldset>;
+const money = (value: number) => `$${value.toLocaleString("en-US")}`;
+
+function summary({ minRent, maxRent }: FilterControlProps["filters"]) {
+  if (minRent === undefined && maxRent === undefined) return "Price";
+  if (minRent === undefined) return `Up to ${money(maxRent!)}`;
+  if (maxRent === undefined) return `${money(minRent)}+`;
+  return `${money(minRent)} - ${money(maxRent)}`;
 }
+
+/** Keep the calm price popover and swap its maximum control as pain rises. */
+export function PriceFilter({ filters, setFilters }: FilterControlProps) {
+  const { pain, ready } = usePain();
+  const slot = ready && pain >= TIERS.annoying;
+  return (
+    <FilterPopover label={summary(filters)} active={filters.minRent !== undefined || filters.maxRent !== undefined} minWidth={154}>
+      <div className={styles.row}>
+        <label className={styles.field}>
+          Minimum
+          <select
+            value={filters.minRent ?? ""}
+            onChange={(event) => setFilters({ minRent: event.target.value ? Number(event.target.value) : undefined })}
+          >
+            <option value="">No min</option>
+            {STEPS.map((step) => (
+              <option key={step} value={step}>
+                {money(step)}
+              </option>
+            ))}
+          </select>
+        </label>
+        {!slot && (
+        <label className={styles.field}>
+          Maximum
+          <select
+            value={filters.maxRent ?? ""}
+            onChange={(event) => setFilters({ maxRent: event.target.value ? Number(event.target.value) : undefined })}
+          >
+            <option value="">No max</option>
+            {STEPS.map((step) => (
+              <option key={step} value={step}>
+                {money(step)}
+              </option>
+            ))}
+          </select>
+        </label>
+        )}
+      </div>
+      {slot && <SlotMachine key={filters.maxRent ?? "none"} filters={filters} setFilters={setFilters} />}
+    </FilterPopover>
+  );
+}
+
 function SlotMachine({ filters, setFilters }: FilterControlProps) {
   const initial = String(Math.min(99999, Math.round(filters.maxRent ?? 2500))).padStart(5, "0").split("").map(Number);
   const [digits, setDigits] = useState(initial);
@@ -53,14 +99,14 @@ function SlotMachine({ filters, setFilters }: FilterControlProps) {
   }
   const budget = Number(digits.join(""));
   const count = applyRentFilters(listings, { ...filters, maxRent: budget }).length;
-  return <div className={styles.machine}>
+  return <div className={slotStyles.machine}>
     <h3>HELL•O•JACKPOT</h3><p>Maximum monthly rent · five digits, zero financial advice</p>
-    <div className={styles.reels}>{digits.map((digit, i) => <div key={i} className={styles.column}>
-      <div className={`${styles.window} ${spinning.includes(i) ? styles.spinning : ""}`} aria-label={`Digit ${i + 1}: ${digit}`}><span>{digit}</span></div>
+    <div className={slotStyles.reels}>{digits.map((digit, i) => <div key={i} className={slotStyles.column}>
+      <div className={`${slotStyles.window} ${spinning.includes(i) ? slotStyles.spinning : ""}`} aria-label={`Digit ${i + 1}: ${digit}`}><span>{digit}</span></div>
       <button disabled={running.current} aria-pressed={locked[i]} onClick={() => setLocked(current => current.map((lock, index) => i === index ? !lock : lock))}>{locked[i] ? "🔒" : "Lock"}</button>
       <button disabled={locked[i] || spinning.length > 0} onClick={() => spin(i)} aria-label={`Spin digit ${i + 1}`}>Spin</button>
       <button disabled={locked[i] || spinning.length > 0} onClick={() => setDigits(current => current.map((value, index) => index === i ? (value + 1) % 10 : value))} aria-label={`Advance digit ${i + 1} by one`}>+1</button>
-    </div>)}<button className={styles.lever} disabled={spinning.length > 0} onClick={() => spin()} aria-label="Pull the slot machine lever">🔴<br />┃<br />SPIN</button></div>
+    </div>)}<button className={slotStyles.lever} disabled={spinning.length > 0} onClick={() => spin()} aria-label="Pull the slot machine lever">🔴<br />┃<br />SPIN</button></div>
     <output aria-live="polite">Budget: ${budget.toLocaleString("en-US")}/month</output>
     <p role="status">{feedback}</p><p>{count === 0 ? "Congratulations! You can now afford absolutely nothing matching these filters." : `${count} actual rentals match this budget and your other filters.`}</p>
     <button disabled={spinning.length > 0} onClick={() => setFilters({ maxRent: budget })}>Confirm ${budget.toLocaleString("en-US")} maximum</button>
