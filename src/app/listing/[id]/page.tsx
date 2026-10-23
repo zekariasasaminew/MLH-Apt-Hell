@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatRent, getListing, listings } from "@/data/listings";
 import { TourScheduler } from "../analog-tours/TourScheduler";
 import styles from "./page.module.css";
+import { ScratchGallery } from "../scratch-photos/ScratchGallery";
 import { RotaryContact } from "../rotary-contact/RotaryContact";
 
 export function generateStaticParams() {
@@ -19,6 +20,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
     <>
       <SiteHeader />
       <main className={styles.main}>
+        <ScratchGallery listing={listing} />
         <Placeholder route={`/listing/${id}`}>
           <h1>{listing.street}</h1>
           <p>
