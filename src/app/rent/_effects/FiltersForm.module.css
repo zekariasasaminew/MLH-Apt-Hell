@@ -1,0 +1,32 @@
+.form {
+  margin: 8px 20px 12px;
+  padding: 8px 12px;
+  font-family: "Courier New", Courier, monospace;
+  letter-spacing: 0.02em;
+  background: #fffbe6;
+  border: 2px dashed #b58900;
+  border-radius: 4px;
+}
+
+.form legend {
+  padding: 0 6px;
+  font-weight: 700;
+  color: #7a5c00;
+}
+
+.scroll {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.row input {
+  accent-color: #b58900;
+}

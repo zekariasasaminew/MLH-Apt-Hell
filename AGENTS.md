@@ -158,6 +158,21 @@ store that in your own cookie named `hellow_<your-id>`.
 - Small commits, imperative messages that say why ("Make the apply button dodge the cursor at hostile pain").
 - No new dependencies without telling the team in the PR description.
 
+## How /rent escalates
+
+`src/app/rent/_lib/rent-pain.ts` has one pure function, `rentEffects(pain)`, that returns a flag per effect. Change a
+threshold there and nothing else. `RentPage.tsx` calls `usePain()` once, computes the effects (all off until the
+cookie is read) and passes them down. Effects stack: everything from lower tiers stays on.
+
+- Page-level effects: `RentPage.tsx` (expensive-first sort, lying pagination, sponsored filler, self-sorting list,
+  filter amnesia), `FilterBar.tsx` / `ResultsHeader.tsx` (inflated count, form-style filters).
+- Per-card effects: `_components/ResultsGrid.tsx` (price creep, ghost listings, urgency badges, income gate, tags).
+- One file per standalone effect in `src/app/rent/_effects/` (save-search modal, income calculator, filters form,
+  Geocities banner). The unhinged restyle is `unhinged.module.css`, targeting `data-rent="..."` attributes.
+- Randomness is seeded (`_lib/seeded-random.ts`) so a demo repeats. Modals close on Escape, nothing touches the
+  history stack, and moving effects check `prefers-reduced-motion`.
+- Map: Leaflet with OpenStreetMap tiles, loaded client-only (`RentMapLoader.tsx`). Keep the attribution.
+
 ## The rent filter contract
 
 All /rent filters live in the URL query string (`?city=moline-il&max=1200&sort=price-asc&page=2`), so Back, refresh
