@@ -1,0 +1,16 @@
+.control { max-width: 640px; padding: 16px; border: 1px solid var(--border); border-radius: 10px; margin: 12px 0; }
+.control button, .control select { padding: 8px; margin: 4px; border: 1px solid var(--border); border-radius: 6px; }
+.control p { margin: 10px 0; }
+.control button:disabled { opacity: .45; }
+.machine { padding: 20px 12px; margin: 12px 0; background: linear-gradient(135deg, #61172e, #281027); color: #fff3d0; border: 5px solid #cba34d; border-radius: 18px; }
+.machine h3 { text-align: center; letter-spacing: 3px; color: #ffe3a0; }
+.reels { display: flex; align-items: center; gap: 4px; margin: 20px 0; }
+.column { flex: 1; min-width: 0; text-align: center; }
+.column button { display: block; margin: 5px auto; font-size: 12px; padding: 6px; }
+.window { overflow: hidden; background: #fffcf0; color: #172239; border: 3px solid #b59a66; border-radius: 8px; height: 75px; font: bold 44px/70px monospace; box-shadow: inset 0 6px 8px #0004; }
+.spinning span { display: inline-block; animation: reel .13s linear infinite; }
+.lever { background: #c5a465; color: #36162a; font-size: 12px; }
+.machine small { display: block; margin-top: 12px; }
+@keyframes reel { from { transform: translateY(-45%); } to { transform: translateY(45%); } }
+@media (prefers-reduced-motion: reduce) { .spinning span { animation: none; } }
+@media (max-width: 450px) { .machine { padding: 12px 4px; } .reels { gap: 2px; } .window { font-size: 32px; } .column button { font-size: 10px; padding: 4px; } }

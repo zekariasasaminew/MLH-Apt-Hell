@@ -1,5 +1,11 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { applyRentFilters } from "@/filters/rent-filters";
+import { listings } from "@/data/listings";
+import { usePain } from "@/pain/PainProvider";
+import { TIERS } from "@/pain/pain-cookie";
+import slotStyles from "./PriceFilter.module.css";
 import type { FilterControlProps } from "@/filters/useRentFilters";
 import { FilterPopover } from "../FilterPopover";
 import styles from "./filters.module.css";
@@ -14,8 +20,10 @@ function summary({ minRent, maxRent }: FilterControlProps["filters"]) {
   return `${money(minRent)} - ${money(maxRent)}`;
 }
 
-/** Default price control. fiatbruno's slot machine (#9) replaces this file; keep the exported name and props. */
+/** Keep the calm price popover and swap its maximum control as pain rises. */
 export function PriceFilter({ filters, setFilters }: FilterControlProps) {
+  const { pain, ready } = usePain();
+  const slot = ready && pain >= TIERS.annoying;
   return (
     <FilterPopover label={summary(filters)} active={filters.minRent !== undefined || filters.maxRent !== undefined} minWidth={154}>
       <div className={styles.row}>
@@ -33,6 +41,7 @@ export function PriceFilter({ filters, setFilters }: FilterControlProps) {
             ))}
           </select>
         </label>
+        {!slot && (
         <label className={styles.field}>
           Maximum
           <select
@@ -47,7 +56,62 @@ export function PriceFilter({ filters, setFilters }: FilterControlProps) {
             ))}
           </select>
         </label>
+        )}
       </div>
+      {slot && <SlotMachine key={filters.maxRent ?? "none"} filters={filters} setFilters={setFilters} />}
     </FilterPopover>
   );
+}
+
+function SlotMachine({ filters, setFilters }: FilterControlProps) {
+  const initial = String(Math.min(99999, Math.round(filters.maxRent ?? 2500))).padStart(5, "0").split("").map(Number);
+  const [digits, setDigits] = useState(initial);
+  const [locked, setLocked] = useState<boolean[]>(Array(5).fill(false));
+  const [spinning, setSpinning] = useState<number[]>([]);
+  const [muted, setMuted] = useState(true);
+  const [feedback, setFeedback] = useState("Pull the lever. Your budget is now a game of chance.");
+  const timers = useRef<ReturnType<typeof setInterval>[]>([]);
+  const running = useRef(false);
+  const audio = useRef<AudioContext | null>(null);
+  useEffect(() => () => { timers.current.forEach(clearInterval); void audio.current?.close(); }, []);
+  function spin(only?: number) {
+    if (running.current) return;
+    const indices = digits.map((_, i) => i).filter(i => !locked[i] && (only === undefined || i === only));
+    if (!indices.length) { setFeedback("All reels locked. The house always wins, but you may confirm."); return; }
+    running.current = true; setSpinning(indices);
+    if (!muted) {
+      const ctx = audio.current ??= new AudioContext(); void ctx.resume();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = "triangle"; osc.frequency.setValueAtTime(300, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + .3);
+      gain.gain.setValueAtTime(.025, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .4);
+      osc.connect(gain).connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + .4);
+    }
+    let ticks = 0;
+    const timer = setInterval(() => {
+      ticks++;
+      setDigits(current => current.map((digit, i) => indices.includes(i) ? (digit + 1 + Math.floor(Math.random() * 9)) % 10 : digit));
+      if (ticks >= 12) {
+        clearInterval(timer); timers.current = timers.current.filter(t => t !== timer);
+        running.current = false; setSpinning([]); setFeedback("The reels have spoken. Lock the good digits, retry the rest.");
+      }
+    }, 65);
+    timers.current.push(timer);
+  }
+  const budget = Number(digits.join(""));
+  const count = applyRentFilters(listings, { ...filters, maxRent: budget }).length;
+  return <div className={slotStyles.machine}>
+    <h3>HELL•O•JACKPOT</h3><p>Maximum monthly rent · five digits, zero financial advice</p>
+    <div className={slotStyles.reels}>{digits.map((digit, i) => <div key={i} className={slotStyles.column}>
+      <div className={`${slotStyles.window} ${spinning.includes(i) ? slotStyles.spinning : ""}`} aria-label={`Digit ${i + 1}: ${digit}`}><span>{digit}</span></div>
+      <button disabled={running.current} aria-pressed={locked[i]} onClick={() => setLocked(current => current.map((lock, index) => i === index ? !lock : lock))}>{locked[i] ? "🔒" : "Lock"}</button>
+      <button disabled={locked[i] || spinning.length > 0} onClick={() => spin(i)} aria-label={`Spin digit ${i + 1}`}>Spin</button>
+      <button disabled={locked[i] || spinning.length > 0} onClick={() => setDigits(current => current.map((value, index) => index === i ? (value + 1) % 10 : value))} aria-label={`Advance digit ${i + 1} by one`}>+1</button>
+    </div>)}<button className={slotStyles.lever} disabled={spinning.length > 0} onClick={() => spin()} aria-label="Pull the slot machine lever">🔴<br />┃<br />SPIN</button></div>
+    <output aria-live="polite">Budget: ${budget.toLocaleString("en-US")}/month</output>
+    <p role="status">{feedback}</p><p>{count === 0 ? "Congratulations! You can now afford absolutely nothing matching these filters." : `${count} actual rentals match this budget and your other filters.`}</p>
+    <button disabled={spinning.length > 0} onClick={() => setFilters({ maxRent: budget })}>Confirm ${budget.toLocaleString("en-US")} maximum</button>
+    <button onClick={() => { timers.current.forEach(clearInterval); timers.current = []; running.current = false; setSpinning([]); setLocked(Array(5).fill(false)); setDigits([0, 2, 5, 0, 0]); setFeedback("Machine reset. Your dignity is non-refundable."); }}>Reset machine</button>
+    <button onClick={() => setFilters({ maxRent: undefined })}>Remove maximum</button><button onClick={() => setMuted(m => !m)}>Sound: {muted ? "muted" : "on"}</button>
+    <small>Use +1 to nudge any unlocked reel to an exact budget.</small>
+  </div>;
 }
