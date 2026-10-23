@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   images: {
     qualities: [75],
-    remotePatterns: [new URL("https://images.unsplash.com/**")],
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com", pathname: "/**" }],
   },
 };
 
