@@ -21,7 +21,7 @@ const cards = [
     title: "Rent a home",
     body: "We're creating a seamless online experience, from shopping on the largest rental network, to applying, to applying again.",
     cta: "Find rentals",
-    href: "/search?type=rent",
+    href: "/rent",
     Illustration: RentIllustration,
   },
 ];

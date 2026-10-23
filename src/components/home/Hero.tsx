@@ -12,7 +12,7 @@ export function Hero() {
           <br />
           Agents. Loans.
         </h1>
-        <form action="/search" className={styles.search} role="search">
+        <form action="/rent" className={styles.search} role="search">
           <input
             name="q"
             type="text"
