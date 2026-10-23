@@ -1,0 +1,141 @@
+.footer {
+  max-width: calc(var(--content-width) + 48px);
+  margin: 0 auto;
+  padding: 64px 24px 48px;
+  text-align: center;
+}
+
+.about p {
+  color: var(--ink-2);
+}
+
+.aboutTitle {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.directories {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 12px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid #e8e8ec;
+}
+
+.directories > li + li {
+  border-left: 1px solid #e8e8ec;
+}
+
+.directory summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  list-style: none;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.directory summary::-webkit-details-marker {
+  display: none;
+}
+
+.directory summary svg {
+  color: var(--blue);
+  transition: transform 150ms ease-out;
+}
+
+.directory[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.directory ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 12px;
+  font-size: 14px;
+}
+
+.directory a:hover {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 14px;
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--ink-2);
+}
+
+.links a {
+  padding: 4px 0;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.doNotSell {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--blue);
+}
+
+.legal {
+  max-width: 720px;
+  margin: 24px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid #e8e8ec;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+.legal p + p {
+  margin-top: 12px;
+}
+
+.legal a {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+  color: var(--ink);
+}
+
+.follow,
+.copyright {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ink-muted);
+}
+
+.equalHousing {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 760px) {
+  .directories {
+    grid-template-columns: 1fr;
+  }
+
+  .directories > li + li {
+    border-left: 0;
+    border-top: 1px solid #e8e8ec;
+  }
+}
