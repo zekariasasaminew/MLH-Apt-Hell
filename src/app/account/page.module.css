@@ -352,11 +352,23 @@
 .modalClose { position: absolute; top: 8px; right: 10px; width: 38px; height: 38px; border: 2px solid #111; border-radius: 50%; background: #fff; font-size: 24px; }
 .stepCounter { font: 900 13px/1 monospace; color: #6800c8; }
 .riddle { padding: 18px; border: 4px ridge #8700c9; background: #1b0029; color: #f5ff00; font: 800 18px/1.4 monospace; }
+.escapeHatch { justify-self: start; padding: 7px 0; border: 0; background: transparent; color: #5d3470; font-size: 12px; text-decoration: underline; }
+.ordealPreview { display: grid; gap: 8px; padding: 14px; border: 3px dashed #ae001d; background: #ffd9df; }
+.ordealPreview span { font: 700 12px/1.5 monospace; }
+.paperwork { display: grid; gap: 8px; max-height: 250px; overflow-y: auto; padding: 12px; border: 4px double #111; background: #e9e4d2; }
+.paperwork label { padding: 9px; border-bottom: 1px dotted #777; background: rgba(255, 255, 255, 0.65); font: 700 13px/1.3 monospace; }
+.paperwork label:nth-child(odd) { transform: rotate(-0.25deg); }
+.holdMusic { display: grid; justify-items: center; gap: 10px; padding: 22px; border: 6px ridge #5c006f; background: repeating-linear-gradient(-45deg, #2b0038 0 16px, #40004d 16px 32px); color: #efff00; text-align: center; }
+.holdMusic > span { font-size: 54px; animation: wobble 420ms infinite alternate; }
+.holdMusic b { font: 900 16px/1.4 monospace; }
+.holdMusic em { color: #ff8fcf; }
+.holdBar { width: 100%; height: 24px; padding: 3px; border: 3px solid #efff00; background: #120018; }
+.holdBar span { display: block; height: 100%; background: repeating-linear-gradient(90deg, #ff2dc8 0 12px, #00ffc8 12px 24px); transition: width 300ms steps(4, end); }
 
 .catArena { position: relative; height: 270px; overflow: hidden; border: 5px solid #111; background: linear-gradient(#a9f4ff 0 65%, #7eb247 65%); }
 .cat { position: absolute; left: var(--cat-x); top: var(--cat-y); display: grid; border: 0; background: transparent; color: #111; font-size: 11px; font-weight: 900; transition: left 500ms ease, top 500ms ease, transform 500ms ease; }
 .cat span:first-child { font-size: 35px; }
-.cat:hover { transform: translate(20px, -8px) rotate(8deg); }
+.cat:hover { filter: drop-shadow(3px 3px 0 #ff35ba); }
 .catSeated { left: auto !important; top: auto !important; right: 42px; bottom: 20px; transform: translateX(calc(var(--cat-x) * -0.16)); }
 .kevin { transform: rotate(180deg); }
 .catTarget { position: absolute; right: 12px; bottom: 10px; width: 138px; height: 78px; padding: 8px; border: 4px dashed #d80028; background: #fff; color: #850018; text-align: center; font: 900 11px/1.1 monospace; }
