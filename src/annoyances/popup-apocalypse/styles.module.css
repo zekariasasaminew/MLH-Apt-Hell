@@ -1,0 +1,18 @@
+.popup { position: fixed; z-index: 120; width: min(310px, calc(100vw - 32px)); max-height: 42vh; overflow: auto; padding: 20px; background: #fff; border: 2px solid #1554be; border-radius: 12px; box-shadow: 0 12px 36px #10224940; font-size: 14px; }
+.popup h2 { font-size: 21px; margin: 8px 0; }
+.popup p { margin: 10px 0; }
+.popup button { padding: 8px 12px; border: 1px solid #bbb; border-radius: 6px; background: #f2f6ff; cursor: pointer; margin: 3px; }
+.popup button:disabled { opacity: .45; cursor: default; }
+.position0 { top: 90px; left: 16px; }
+.position1 { top: 90px; right: 16px; }
+.position2 { bottom: 90px; left: 16px; }
+.position3 { bottom: 18px; right: 16px; }
+.position4 { top: 45%; left: calc(50% - 155px); }
+.terms { height: 100px; overflow: auto; border: 1px solid #ccc; padding: 8px; }
+.runway { height: 45px; }
+.drag { touch-action: none; }
+.trash { position: fixed; z-index: 121; bottom: 12px; left: 45%; padding: 14px; background: #e9ffec; border: 2px dashed #278a42; }
+.accessible { font-size: 11px; }
+.demo { position: fixed; bottom: 8px; left: 220px; z-index: 100; padding: 6px; font-size: 11px; }
+@media (max-width: 680px) { .popup { width: calc(50vw - 20px); padding: 10px; font-size: 12px; } .popup h2 { font-size: 16px; } .position4 { left: 25%; } }
+@media (prefers-reduced-motion: reduce) { .runway button { margin-left: 0 !important; } }
