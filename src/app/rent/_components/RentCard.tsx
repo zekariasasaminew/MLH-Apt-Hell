@@ -9,17 +9,16 @@ import styles from "./RentCard.module.css";
 export type RentCardProps = {
   listing: Listing;
   href: string;
-  /** Rent to display, which can differ from the listing's own rent once pain gets involved. */
+  /** Rent to display, which creeps away from the listing's own rent. */
   rent: number;
   highlighted: boolean;
-  /** Mild tier: replaces "Fees may apply" while the card is hovered. */
+  /** Replaces "Fees may apply" while the card is hovered. */
   feeLabel?: string;
   extraBadges?: React.ReactNode;
   extraBody?: React.ReactNode;
   overlay?: React.ReactNode;
   onHover: (id: string | null) => void;
   onNavigate: (event: React.MouseEvent) => void;
-  onMenuOpen: () => void;
   cardRef?: (element: HTMLElement | null) => void;
 };
 
@@ -34,7 +33,6 @@ export function RentCard({
   overlay,
   onHover,
   onNavigate,
-  onMenuOpen,
   cardRef,
 }: RentCardProps) {
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -106,10 +104,7 @@ export function RentCard({
               className={styles.more}
               aria-label="More options"
               aria-expanded={menuOpen}
-              onClick={() => {
-                if (!menuOpen) onMenuOpen();
-                setMenuOpen((value) => !value);
-              }}
+              onClick={() => setMenuOpen((value) => !value)}
             >
               •••
             </button>

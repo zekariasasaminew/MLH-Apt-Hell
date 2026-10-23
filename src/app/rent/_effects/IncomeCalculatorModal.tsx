@@ -7,7 +7,7 @@ import styles from "./IncomeCalculatorModal.module.css";
 
 const money = (value: number) => `$${value.toLocaleString("en-US")}`;
 
-/** Hostile tier: the income check that always says you are $3 short. Escape and Close always work. */
+/** The income check that always says you are $3 short. Escape and Close always work. */
 export function IncomeCalculatorModal({ listing, onClose }: { listing: Listing; onClose: () => void }) {
   const [income, setIncome] = useState("");
   const entered = Number(income.replace(/[^0-9]/g, ""));

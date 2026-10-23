@@ -5,8 +5,6 @@ import styles from "./Pagination.module.css";
 type Props = {
   page: number;
   pageCount: number;
-  /** Annoying tier: pretends there are hundreds of pages. */
-  lying: boolean;
   onPage: (page: number) => void;
 };
 
@@ -16,8 +14,7 @@ function windowOf(page: number, pageCount: number): (number | "gap")[] {
   return sorted.flatMap((value, index) => (index > 0 && value - sorted[index - 1] > 1 ? ["gap" as const, value] : [value]));
 }
 
-export function Pagination({ page, pageCount, lying, onPage }: Props) {
-  if (pageCount <= 1 && !lying) return null;
+export function Pagination({ page, pageCount, onPage }: Props) {
   const entries = windowOf(page, pageCount);
 
   return (
@@ -42,14 +39,10 @@ export function Pagination({ page, pageCount, lying, onPage }: Props) {
           </button>
         ),
       )}
-      {lying && (
-        <>
-          <span className={styles.gap}>…</span>
-          <button type="button" className={styles.page} onClick={() => onPage(412)}>
-            412
-          </button>
-        </>
-      )}
+      <span className={styles.gap}>…</span>
+      <button type="button" className={styles.page} onClick={() => onPage(412)}>
+        412
+      </button>
       <button type="button" className={styles.step} disabled={page >= pageCount} onClick={() => onPage(page + 1)} aria-label="Next page">
         ›
       </button>

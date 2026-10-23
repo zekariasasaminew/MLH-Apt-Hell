@@ -1,6 +1,6 @@
 import styles from "./GeocitiesBanner.module.css";
 
-/** Unhinged tier: the page turns into a 1999 fan site. Pairs with the .geo rules in unhinged.module.css. */
+/** The page is a 1999 fan site. Pairs with the .geo rules in geocities.module.css. */
 export function GeocitiesBanner() {
   return (
     <div className={styles.banner} data-rent="geo-banner">

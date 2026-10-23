@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "./UrgencyBadge.module.css";
 
-/** Mild tier: a "people applied today" counter that keeps climbing while the tab is visible. */
+/** A "people applied today" counter that keeps climbing while the tab is visible. */
 export function UrgencyBadge({ seed }: { seed: number }) {
   const [people, setPeople] = useState(6 + (seed % 19));
 

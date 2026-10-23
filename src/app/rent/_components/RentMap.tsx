@@ -17,12 +17,6 @@ type Props = {
   onSelect: (id: string) => void;
   center: [number, number];
   zoom: number;
-  /** Hostile tier: tiles lose their color. */
-  degraded: boolean;
-  /** Hostile tier: the + and - buttons are swapped. */
-  swapZoom: boolean;
-  /** Annoying tier: pins slide away from the cursor. */
-  shyPins: boolean;
   /** Called when the person drags the map (not for programmatic moves). */
   onUserDrag: () => void;
 };
@@ -68,10 +62,10 @@ function DragWatcher({ onUserDrag }: Pick<Props, "onUserDrag">) {
   return null;
 }
 
-function ShyPins({ enabled }: { enabled: boolean }) {
+function ShyPins() {
   const map = useMap();
   useEffect(() => {
-    if (!enabled || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const container = map.getContainer();
     const onMove = (event: MouseEvent) => {
       container.querySelectorAll<HTMLElement>(`.${styles.pinWrap}`).forEach((wrap) => {
@@ -93,11 +87,11 @@ function ShyPins({ enabled }: { enabled: boolean }) {
       container.removeEventListener("mousemove", onMove);
       container.querySelectorAll<HTMLElement>(`.${styles.pinWrap} > span`).forEach((pin) => (pin.style.transform = ""));
     };
-  }, [map, enabled]);
+  }, [map]);
   return null;
 }
 
-function ZoomButtons({ swapped }: { swapped: boolean }) {
+function ZoomButtons() {
   const map = useMap();
   const box = useRef<HTMLDivElement>(null);
 
@@ -110,19 +104,19 @@ function ZoomButtons({ swapped }: { swapped: boolean }) {
 
   return (
     <div ref={box} className={styles.zoom}>
-      <button type="button" aria-label="Zoom in" onClick={() => (swapped ? map.zoomOut() : map.zoomIn())}>
+      <button type="button" aria-label="Zoom in" onClick={() => map.zoomOut()}>
         +
       </button>
-      <button type="button" aria-label="Zoom out" onClick={() => (swapped ? map.zoomIn() : map.zoomOut())}>
+      <button type="button" aria-label="Zoom out" onClick={() => map.zoomIn()}>
         −
       </button>
     </div>
   );
 }
 
-export default function RentMap({ items, hoveredId, selectedId, onHover, onSelect, center, zoom, degraded, swapZoom, shyPins, onUserDrag }: Props) {
+export default function RentMap({ items, hoveredId, selectedId, onHover, onSelect, center, zoom, onUserDrag }: Props) {
   return (
-    <div className={`${styles.map} ${degraded ? styles.degraded : ""}`} data-rent="map">
+    <div className={`${styles.map} ${styles.degraded}`} data-rent="map">
       <MapContainer center={center} zoom={zoom} zoomControl={false} scrollWheelZoom style={{ height: "100%", width: "100%" }}>
         <TileLayer
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -148,8 +142,8 @@ export default function RentMap({ items, hoveredId, selectedId, onHover, onSelec
         <Recenter center={center} zoom={zoom} />
         <PanToSelected items={items} selectedId={selectedId} />
         <DragWatcher onUserDrag={onUserDrag} />
-        <ShyPins enabled={shyPins} />
-        <ZoomButtons swapped={swapZoom} />
+        <ShyPins />
+        <ZoomButtons />
       </MapContainer>
     </div>
   );

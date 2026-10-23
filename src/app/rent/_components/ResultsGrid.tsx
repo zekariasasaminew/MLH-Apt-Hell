@@ -5,7 +5,6 @@ import type { Listing } from "@/data/listings";
 import { absurdTagsFor } from "../_effects/absurd-tags";
 import { IncomeCalculatorModal } from "../_effects/IncomeCalculatorModal";
 import { UrgencyBadge } from "../_effects/UrgencyBadge";
-import type { RentEffects } from "../_lib/rent-pain";
 import { hashString, mulberry32 } from "../_lib/seeded-random";
 import { RentCard } from "./RentCard";
 import styles from "./ResultsGrid.module.css";
@@ -14,17 +13,16 @@ export type CardItem = { listing: Listing; href: string };
 
 type Props = {
   items: CardItem[];
-  effects: RentEffects;
   highlightedId: string | null;
   onHover: (id: string | null) => void;
-  onBump: (amount: number) => void;
 };
 
 const MAX_CREEP = 40;
 const GHOST_MS = 2000;
+const BASE_FEE = 899;
 
-/** Applies the per-card effects (creep, ghosts, urgency, income gate, tags) around the calm RentCard. */
-export function ResultsGrid({ items, effects, highlightedId, onHover, onBump }: Props) {
+/** Layers price creep, ghost listings, urgency badges, the income gate and absurd tags over the card. */
+export function ResultsGrid({ items, highlightedId, onHover }: Props) {
   const grid = useRef<HTMLUListElement>(null);
   const clicks = useRef<Record<string, number>>({});
   const timers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
@@ -41,7 +39,7 @@ export function ResultsGrid({ items, effects, highlightedId, onHover, onBump }: 
   const idsKey = items.map((item) => item.listing.id).join(",");
 
   useEffect(() => {
-    if (!effects.priceCreep || !grid.current) return;
+    if (!grid.current) return;
     const wentOut = new Set<string>();
     const seen = new Set<string>();
     const observer = new IntersectionObserver((entries) => {
@@ -58,10 +56,10 @@ export function ResultsGrid({ items, effects, highlightedId, onHover, onBump }: 
     });
     grid.current.querySelectorAll("[data-rent=card]").forEach((card) => observer.observe(card));
     return () => observer.disconnect();
-  }, [effects.priceCreep, idsKey]);
+  }, [idsKey]);
 
   const handleNavigate = (event: React.MouseEvent, id: string) => {
-    if (!effects.ghostListings || id.startsWith("promoted-")) return;
+    if (id.startsWith("promoted-")) return;
     const count = (clicks.current[id] = (clicks.current[id] ?? 0) + 1);
     if (mulberry32(hashString(`${id}:${count}`))() >= 1 / 3) return;
 
@@ -87,57 +85,43 @@ export function ResultsGrid({ items, effects, highlightedId, onHover, onBump }: 
           return (
             <li
               key={listing.id}
-              className={effects.gravityCards ? styles.sag : undefined}
-              style={
-                effects.gravityCards
-                  ? ({ "--sag": `${sag}px`, "--tilt": `${(index % 2 === 0 ? 1 : -1) * ((seed % 3) + 1)}deg` } as React.CSSProperties)
-                  : undefined
-              }
+              className={styles.sag}
+              style={{ "--sag": `${sag}px`, "--tilt": `${(index % 2 === 0 ? 1 : -1) * ((seed % 3) + 1)}deg` } as React.CSSProperties}
             >
               <RentCard
                 listing={listing}
                 href={href}
                 rent={rent}
                 highlighted={highlightedId === listing.id}
-                feeLabel={effects.feesOnHover && !promoted ? `+ $${effects.feeAmount + (seed % 120)} in fees` : undefined}
+                feeLabel={promoted ? undefined : `+ $${BASE_FEE + (seed % 120)} in fees`}
                 extraBadges={
                   <>
                     {backOnMarket[listing.id] ? <span className={styles.backBadge}>Back on market!</span> : null}
-                    {effects.urgencyBadges && !promoted && seed % 3 === 0 ? <UrgencyBadge seed={seed} /> : null}
+                    {!promoted && seed % 3 === 0 ? <UrgencyBadge seed={seed} /> : null}
                   </>
                 }
                 extraBody={
-                  <>
-                    {effects.incomeGate && !promoted && (
+                  promoted ? null : (
+                    <>
                       <div className={styles.income}>
                         <span>Income must be 40x rent ({`$${(rent * 40).toLocaleString("en-US")}`}/yr)</span>
                         {listing.applyInstantly && (
-                          <button
-                            type="button"
-                            className={styles.applyButton}
-                            onClick={() => {
-                              onBump(2);
-                              setIncomeFor(listing);
-                            }}
-                          >
+                          <button type="button" className={styles.applyButton} onClick={() => setIncomeFor(listing)}>
                             Apply instantly
                           </button>
                         )}
                       </div>
-                    )}
-                    {effects.absurdTags && !promoted && (
                       <ul className={styles.tags}>
                         {absurdTagsFor(listing.id).map((tag) => (
                           <li key={tag}>{tag}</li>
                         ))}
                       </ul>
-                    )}
-                  </>
+                    </>
+                  )
                 }
                 overlay={ghosts[listing.id] ? <div className={styles.ghost}>This listing is no longer available</div> : null}
                 onHover={onHover}
                 onNavigate={(event) => handleNavigate(event, listing.id)}
-                onMenuOpen={() => onBump(1)}
               />
             </li>
           );

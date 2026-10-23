@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import styles from "./SaveSearchModal.module.css";
 
-/** Mild tier: "Save search" opens a sign-in wall with a small close button. Escape always closes it. */
+/** "Save search" opens a sign-in wall with a small close button. Escape always closes it. */
 export function SaveSearchModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

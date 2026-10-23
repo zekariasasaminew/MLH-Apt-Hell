@@ -30,7 +30,7 @@ const JOKE_FILTERS = [
 
 const TYPES: HomeType[] = ["Apartment", "House", "Townhome", "Condo"];
 
-/** Hostile tier: the filter bar collapses into one long form. A handful of the boxes really filter. */
+/** The filter bar collapses into one long form. A handful of the boxes really filter. */
 export function FiltersForm({ filters, setFilters }: FilterControlProps) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const types = filters.homeTypes ?? [];
