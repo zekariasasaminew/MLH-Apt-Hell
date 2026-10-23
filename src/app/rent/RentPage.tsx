@@ -1,60 +1,202 @@
 "use client";
 
-import Link from "next/link";
-import { formatRent, listings } from "@/data/listings";
-import { applyRentFilters, paginate, SORT_KEYS } from "@/filters/rent-filters";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { cities, listings } from "@/data/listings";
+import { applyRentFilters, paginate, PAGE_SIZE, type RentFilters } from "@/filters/rent-filters";
 import { useRentFilters } from "@/filters/useRentFilters";
-import { LocationFilter } from "./_components/filters/LocationFilter";
-import { PriceFilter } from "./_components/filters/PriceFilter";
+import { usePain } from "@/pain/PainProvider";
+import { EmptyState } from "./_components/EmptyState";
+import { FilterBar } from "./_components/FilterBar";
+import { Pagination } from "./_components/Pagination";
+import { ResultsGrid, type CardItem } from "./_components/ResultsGrid";
+import { ResultsHeader } from "./_components/ResultsHeader";
+import { RentMapLoader } from "./_components/RentMapLoader";
+import { ToastStack, type Toast } from "./_components/ToastStack";
+import { FiltersForm } from "./_effects/FiltersForm";
+import { GeocitiesBanner } from "./_effects/GeocitiesBanner";
+import { SaveSearchModal } from "./_effects/SaveSearchModal";
+import { PROMOTED_LINK_TARGET, promotedListings } from "./_lib/promoted";
+import { rentEffects } from "./_lib/rent-pain";
+import { hashString, seededShuffle } from "./_lib/seeded-random";
+import { useReducedMotion } from "./_lib/useReducedMotion";
 import styles from "./rent.module.css";
+import geo from "./unhinged.module.css";
 
-/** Temporary unstyled shell that proves the filter contract end to end. The calm-tier PR replaces its body. */
+const QUAD_CITIES: [number, number] = [41.515, -90.52];
+const SELF_SORT_MS = 8000;
+const AMNESIA_COOLDOWN_MS = 15000;
+
+const AMNESIA_TARGETS: [keyof RentFilters, string][] = [
+  ["maxRent", "Price"],
+  ["minRent", "Price"],
+  ["beds", "Beds"],
+  ["baths", "Baths"],
+  ["homeTypes", "Property type"],
+  ["pets", "Pets"],
+  ["laundry", "In-unit laundry"],
+  ["parking", "Parking"],
+  ["availableBy", "Available by"],
+  ["city", "Location"],
+  ["q", "Location"],
+];
+
 export function RentPage() {
-  const { filters, setFilters, clearFilters } = useRentFilters();
-  const results = applyRentFilters(listings, filters);
-  const { items, pageCount, page } = paginate(results, filters.page);
+  const { filters, setFilters: pushFilters, clearFilters } = useRentFilters();
+  const { pain, ready, bump } = usePain();
+  const reducedMotion = useReducedMotion();
+  const effects = useMemo(() => rentEffects(ready ? pain : 0), [ready, pain]);
+
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [mobileView, setMobileView] = useState<"list" | "map">("list");
+  const [shuffleTick, setShuffleTick] = useState(0);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const toastId = useRef(0);
+  const toastTimers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+  const lastAmnesiaAt = useRef(0);
+  const amnesiaCount = useRef(0);
+  const listPane = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timers = toastTimers.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const toast = useCallback((message: string) => {
+    const id = ++toastId.current;
+    setToasts((current) => [...current.slice(-2), { id, message }]);
+    const timer = setTimeout(() => {
+      toastTimers.current.delete(timer);
+      setToasts((current) => current.filter((item) => item.id !== id));
+    }, 4000);
+    toastTimers.current.add(timer);
+  }, []);
+
+  const setFilters = useCallback(
+    (patch: Partial<RentFilters>) => {
+      bump(patch.page !== undefined ? 2 : 1);
+      pushFilters(patch);
+    },
+    [bump, pushFilters],
+  );
+
+  useEffect(() => {
+    if (!effects.selfSorting) return;
+    const timer = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (!reducedMotion) setShuffleTick((tick) => tick + 1);
+      toast("Prices updated");
+    }, SELF_SORT_MS);
+    return () => clearInterval(timer);
+  }, [effects.selfSorting, reducedMotion, toast]);
+
+  const sort = filters.sort === "recommended" && effects.expensiveFirst ? "price-desc" : filters.sort;
+  const matching = useMemo(() => applyRentFilters(listings, { ...filters, sort }), [filters, sort]);
+  const paged = paginate(matching, filters.page);
+
+  const cardItems = useMemo<CardItem[]>(() => {
+    let visible = paged.items;
+    if (effects.lyingPagination && paged.page === 2) {
+      visible = seededShuffle(paginate(matching, 1).items, hashString(`page2:${matching.length}`));
+    }
+    if (effects.selfSorting && shuffleTick > 0) visible = seededShuffle(visible, hashString(`tick:${shuffleTick}`));
+
+    const items: CardItem[] = visible.map((listing) => ({
+      listing,
+      href: `/listing/${effects.allRoadsOneListing ? listings[0].id : listing.id}`,
+    }));
+    if (effects.sponsoredFiller) {
+      let inserted = 0;
+      for (let position = 3; position <= items.length && inserted < promotedListings.length; position += 4) {
+        items.splice(position, 0, { listing: promotedListings[inserted], href: `/listing/${PROMOTED_LINK_TARGET}` });
+        inserted++;
+      }
+    }
+    return items;
+  }, [paged.items, paged.page, matching, effects, shuffleTick]);
+
+  const mapCenter = useMemo<[number, number]>(
+    () => cities.find((city) => city.slug === filters.city)?.center ?? QUAD_CITIES,
+    [filters.city],
+  );
+  const mapZoom = filters.city ? 13 : 11;
+
+  const selectPin = useCallback(
+    (id: string) => {
+      setSelectedId(id);
+      setMobileView("list");
+      const index = matching.findIndex((listing) => listing.id === id);
+      if (index >= 0) {
+        const targetPage = Math.floor(index / PAGE_SIZE) + 1;
+        if (targetPage !== paged.page) pushFilters({ page: targetPage });
+      }
+    },
+    [matching, paged.page, pushFilters],
+  );
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const card = listPane.current?.querySelector(`[data-listing-id="${selectedId}"]`);
+    card?.scrollIntoView({ block: "center", behavior: reducedMotion ? "auto" : "smooth" });
+  }, [selectedId, cardItems, reducedMotion]);
+
+  const handleUserDrag = useCallback(() => {
+    if (!effects.filterAmnesia) return;
+    const now = Date.now();
+    if (now - lastAmnesiaAt.current < AMNESIA_COOLDOWN_MS) return;
+    const active = AMNESIA_TARGETS.filter(([key]) => filters[key] !== undefined);
+    if (active.length === 0) return;
+    lastAmnesiaAt.current = now;
+    const [key, label] = active[amnesiaCount.current++ % active.length];
+    pushFilters({ [key]: undefined });
+    toast(`We cleared ${label} to show you more homes`);
+  }, [effects.filterAmnesia, filters, pushFilters, toast]);
+
+  const saveSearch = () => {
+    bump(3);
+    if (effects.saveSearchModal) setSaveOpen(true);
+    else toast("Sign in to save your search");
+  };
 
   return (
-    <div className={styles.shell}>
-      <h1>Rental listings</h1>
-      <LocationFilter filters={filters} setFilters={setFilters} />
-      <PriceFilter filters={filters} setFilters={setFilters} />
-      <label>
-        Sort{" "}
-        <select
-          value={filters.sort}
-          onChange={(event) => setFilters({ sort: event.target.value as (typeof SORT_KEYS)[number] })}
-        >
-          {SORT_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
-      </label>{" "}
-      <button onClick={clearFilters}>Remove all filters</button>
-
-      <h2>{results.length} rentals available</h2>
-      {results.length === 0 && <p>No matching results. Try changing your search, such as removing filters.</p>}
-      <ul>
-        {items.map((listing) => (
-          <li key={listing.id}>
-            <Link href={`/listing/${listing.id}`}>
-              {formatRent(listing.rent)}: {listing.beds} bd, {listing.baths} ba, {listing.street}, {listing.city}
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      <nav aria-label="Pagination">
-        <button disabled={page <= 1} onClick={() => setFilters({ page: page - 1 })}>
-          Previous
-        </button>{" "}
-        Page {page} of {pageCount}{" "}
-        <button disabled={page >= pageCount} onClick={() => setFilters({ page: page + 1 })}>
-          Next
-        </button>
-      </nav>
+    <div className={`${styles.root} ${effects.geocities ? geo.geo : ""}`} data-rent="root">
+      {effects.geocities && <GeocitiesBanner />}
+      <FilterBar filters={filters} setFilters={setFilters} effects={effects} onSaveSearch={saveSearch} />
+      <div className={styles.split}>
+        <div className={`${styles.mapPane} ${mobileView === "map" ? styles.paneShown : ""}`}>
+          <RentMapLoader
+            items={matching}
+            hoveredId={hoveredId}
+            selectedId={selectedId}
+            onHover={setHoveredId}
+            onSelect={selectPin}
+            center={mapCenter}
+            zoom={mapZoom}
+            degraded={effects.degradedMap}
+            swapZoom={effects.degradedMap}
+            shyPins={effects.shyPins}
+            onUserDrag={handleUserDrag}
+          />
+        </div>
+        <div ref={listPane} className={`${styles.listPane} ${mobileView === "list" ? styles.paneShown : ""}`} data-rent="listpane">
+          <ResultsHeader filters={filters} count={matching.length} effects={effects} onSort={(next) => setFilters({ sort: next })} />
+          {effects.filtersAsForm && <FiltersForm filters={filters} setFilters={setFilters} />}
+          {matching.length === 0 ? (
+            <EmptyState onClear={clearFilters} />
+          ) : (
+            <ResultsGrid items={cardItems} effects={effects} highlightedId={hoveredId ?? selectedId} onHover={setHoveredId} onBump={bump} />
+          )}
+          <Pagination page={paged.page} pageCount={paged.pageCount} lying={effects.lyingPagination} onPage={(next) => setFilters({ page: next })} />
+          <SiteFooter />
+        </div>
+      </div>
+      <button type="button" className={styles.viewToggle} onClick={() => setMobileView((view) => (view === "list" ? "map" : "list"))}>
+        {mobileView === "list" ? "Map" : "List"}
+      </button>
+      <ToastStack toasts={toasts} />
+      {saveOpen && <SaveSearchModal onClose={() => setSaveOpen(false)} />}
     </div>
   );
 }
