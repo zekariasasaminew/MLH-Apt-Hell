@@ -1,0 +1,100 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 8px 20px;
+  list-style: none;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sag {
+  animation: sag 20s ease-out forwards;
+}
+
+@keyframes sag {
+  to {
+    transform: translateY(var(--sag)) rotate(var(--tilt));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sag {
+    animation: none;
+    transform: translateY(var(--sag)) rotate(var(--tilt));
+  }
+}
+
+.backBadge {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #fff;
+  background: var(--badge-orange);
+  border-radius: 999px;
+}
+
+.ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  background: rgba(17, 17, 22, 0.82);
+  border-radius: var(--radius-sm);
+}
+
+.income {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--badge-orange);
+}
+
+.applyButton {
+  flex: none;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: 999px;
+}
+
+.tags {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff3c4;
+  border: 1px dashed #b58900;
+  border-radius: 999px;
+}
