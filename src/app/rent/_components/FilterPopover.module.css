@@ -1,0 +1,71 @@
+.wrap {
+  position: relative;
+  flex: none;
+}
+
+.pill {
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  white-space: nowrap;
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px #7e7f8e;
+}
+
+.pill:hover {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.active {
+  background: #e2f0ff;
+  box-shadow: inset 0 0 0 2px var(--blue);
+}
+
+.chevron {
+  flex: none;
+  color: var(--ink);
+}
+
+.popover {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  z-index: 30;
+  min-width: 280px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.apply {
+  width: 100%;
+  margin-top: 16px;
+  padding: 9px 16px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: var(--radius-sm);
+}
+
+.apply:hover {
+  background: var(--blue-hover);
+}
+
+@media (max-width: 900px) {
+  .popover {
+    position: fixed;
+    top: 144px;
+    left: 8px;
+    right: 8px;
+  }
+}
