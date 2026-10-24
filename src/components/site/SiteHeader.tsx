@@ -12,6 +12,7 @@ const leftLinks = [
   { label: "Rent", href: "/rent" },
   { label: "Sell", href: "/search?type=sell" },
   { label: "Get a mortgage", href: "/mortgage" },
+  { label: "Spin a listing", href: "/spin" },
   { label: "Find an agent", href: "/search?type=agent" },
 ];
 
