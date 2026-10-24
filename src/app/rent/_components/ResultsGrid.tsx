@@ -1,7 +1,9 @@
 "use client";
 
 import { useMarket } from "../_lib/MarketContext";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import type { Listing } from "@/data/listings";
 import { absurdTagsFor } from "../_effects/absurd-tags";
 import { IncomeCalculatorModal } from "../_effects/IncomeCalculatorModal";
@@ -25,6 +27,8 @@ const BASE_FEE = 899;
 /** Layers price creep, ghost listings, urgency badges, the income gate and absurd tags over the card. */
 export function ResultsGrid({ items, highlightedId, onHover }: Props) {
   const mode = useMarket();
+  const router = useRouter();
+  const { requireCaptcha } = useCaptcha();
   const grid = useRef<HTMLUListElement>(null);
   const clicks = useRef<Record<string, number>>({});
   const timers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
@@ -60,12 +64,13 @@ export function ResultsGrid({ items, highlightedId, onHover }: Props) {
     return () => observer.disconnect();
   }, [idsKey]);
 
-  const handleNavigate = (event: React.MouseEvent, id: string) => {
-    if (id.startsWith("promoted-")) return;
-    const count = (clicks.current[id] = (clicks.current[id] ?? 0) + 1);
-    if (mulberry32(hashString(`${id}:${count}`))() >= 1 / 3) return;
-
+  const handleNavigate = async (event: React.MouseEvent, id: string, href: string) => {
     event.preventDefault();
+    if (!(await requireCaptcha("open-listing"))) return;
+    if (id.startsWith("promoted-")) return router.push(href);
+    const count = (clicks.current[id] = (clicks.current[id] ?? 0) + 1);
+    if (mulberry32(hashString(`${id}:${count}`))() >= 1 / 3) return router.push(href);
+
     setGhosts((state) => ({ ...state, [id]: true }));
     const timer = setTimeout(() => {
       timers.current.delete(timer);
@@ -123,7 +128,7 @@ export function ResultsGrid({ items, highlightedId, onHover }: Props) {
                 }
                 overlay={ghosts[listing.id] ? <div className={styles.ghost}>This listing is no longer available</div> : null}
                 onHover={onHover}
-                onNavigate={(event) => handleNavigate(event, listing.id)}
+                onNavigate={(event) => handleNavigate(event, listing.id, href)}
               />
             </li>
           );
