@@ -2,20 +2,15 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { usePain } from "@/pain/PainProvider";
-import { TIERS } from "@/pain/pain-cookie";
 import type { Listing } from "@/data/listings";
 import styles from "./styles.module.css";
 
 function ScratchPhoto({ listing, zoom }: { listing: Listing; zoom: boolean }) {
-  const { pain, ready } = usePain();
-  const covered = ready && pain >= TIERS.annoying;
   const canvas = useRef<HTMLCanvasElement>(null);
   const previous = useRef<{ x: number; y: number } | null>(null);
   const [percent, setPercent] = useState(0);
   const revealed = percent >= 45;
   useEffect(() => {
-    if (!covered) return;
     const ctx = canvas.current?.getContext("2d", { willReadFrequently: true });
     if (!ctx) return;
     ctx.globalCompositeOperation = "source-over";
@@ -27,7 +22,7 @@ function ScratchPhoto({ listing, zoom }: { listing: Listing; zoom: boolean }) {
     ctx.fillStyle = "#333"; ctx.font = "bold 24px sans-serif"; ctx.textAlign = "center";
     ctx.fillText("SCRATCH TO VIEW YOUR FUTURE", 300, 170);
     ctx.font = "16px sans-serif"; ctx.fillText("Listing photos now require manual labor.", 300, 210);
-  }, [covered]);
+  }, []);
   function scratch(e: PointerEvent<HTMLCanvasElement>) {
     if (!previous.current && e.type !== "pointerdown") return;
     const el = e.currentTarget;
@@ -51,9 +46,9 @@ function ScratchPhoto({ listing, zoom }: { listing: Listing; zoom: boolean }) {
   return <>
     <div className={styles.photo}>
       <Image src={listing.photo} alt={`${listing.street}${zoom ? ", enlarged exterior detail" : ", exterior"}`} fill sizes="(max-width: 700px) 100vw, 800px" style={{ objectFit: "cover", transform: zoom ? "scale(1.3)" : undefined }} />
-      {covered && !revealed && <canvas ref={canvas} width={600} height={380} aria-label="Scratch-off photo covering. Drag to reveal or use the reveal button." onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); scratch(e); }} onPointerMove={scratch} onPointerUp={measure} onPointerCancel={measure} />}
+      {!revealed && <canvas ref={canvas} width={600} height={380} aria-label="Scratch-off photo covering. Drag to reveal or use the reveal button." onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); scratch(e); }} onPointerMove={scratch} onPointerUp={measure} onPointerCancel={measure} />}
     </div>
-    {covered && <><p role="status">{revealed ? "Congratulations, you unlocked an exterior! The kitchen remains theoretical." : `${percent}% scratched. Reveal 45% to unlock the rest.`}</p>{!revealed && <button onClick={() => setPercent(100)}>Reveal photo without scratching</button>}</>}
+    <p role="status">{revealed ? "Congratulations, you unlocked an exterior! The kitchen remains theoretical." : `${percent}% scratched. Reveal 45% to unlock the rest.`}</p>{!revealed && <button onClick={() => setPercent(100)}>Reveal photo without scratching</button>}
   </>;
 }
 

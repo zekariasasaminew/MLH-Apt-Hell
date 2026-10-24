@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { applyRentFilters } from "@/filters/rent-filters";
 import { listings } from "@/data/listings";
-import { usePain } from "@/pain/PainProvider";
-import { TIERS } from "@/pain/pain-cookie";
 import slotStyles from "./PriceFilter.module.css";
 import type { FilterControlProps } from "@/filters/useRentFilters";
 import { FilterPopover } from "../FilterPopover";
@@ -20,10 +18,8 @@ function summary({ minRent, maxRent }: FilterControlProps["filters"]) {
   return `${money(minRent)} - ${money(maxRent)}`;
 }
 
-/** Keep the calm price popover and swap its maximum control as pain rises. */
+/** Price popover with a plain minimum and a slot machine for the maximum. */
 export function PriceFilter({ filters, setFilters }: FilterControlProps) {
-  const { pain, ready } = usePain();
-  const slot = ready && pain >= TIERS.annoying;
   return (
     <FilterPopover label={summary(filters)} active={filters.minRent !== undefined || filters.maxRent !== undefined} minWidth={154}>
       <div className={styles.row}>
@@ -41,24 +37,8 @@ export function PriceFilter({ filters, setFilters }: FilterControlProps) {
             ))}
           </select>
         </label>
-        {!slot && (
-        <label className={styles.field}>
-          Maximum
-          <select
-            value={filters.maxRent ?? ""}
-            onChange={(event) => setFilters({ maxRent: event.target.value ? Number(event.target.value) : undefined })}
-          >
-            <option value="">No max</option>
-            {STEPS.map((step) => (
-              <option key={step} value={step}>
-                {money(step)}
-              </option>
-            ))}
-          </select>
-        </label>
-        )}
       </div>
-      {slot && <SlotMachine key={filters.maxRent ?? "none"} filters={filters} setFilters={setFilters} />}
+      <SlotMachine key={filters.maxRent ?? "none"} filters={filters} setFilters={setFilters} />
     </FilterPopover>
   );
 }
