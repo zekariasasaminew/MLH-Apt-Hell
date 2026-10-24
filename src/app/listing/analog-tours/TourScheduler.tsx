@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DateWheel } from "./DateWheel";
 import { useCaptcha } from "@/captcha/CaptchaProvider";
 import styles from "./styles.module.css";
 
@@ -40,7 +41,7 @@ export function TourScheduler({ listingId, street }: { listingId: string; street
   }
   if (saved) return <section className={styles.panel} aria-live="polite"><h2>Your simulated tour is requested</h2><p>{street}</p><p><time dateTime={`${saved.date}T${timeLabel(saved.minutes)}`}>{saved.date} at {timeLabel(saved.minutes)} (property local time)</time></p><p>Our imaginary agent has penciled you in using imaginary pencils. No booking was sent.</p><p>{storageWarning}</p><button onClick={() => { setDate(saved.date); setMinutes(saved.minutes); setSaved(null); }}>Schedule another pretend tour</button></section>;
   return <section className={styles.panel}><h2>Request a tour</h2><p>Choose a date and property-local time. This is a simulation.</p>
-    <label>Tour date <input type="date" required value={date} onChange={e => { setDate(e.target.value); setReview(false); }} /></label>
+    <div>Tour date <DateWheel value={date} onPick={iso => { setDate(iso); setReview(false); }} /></div>
     <><p>Rotate either hand. The minute hand also moves the hour hand. Apparently clocks still exist.</p>
       <svg className={styles.clock} viewBox="0 0 300 300" role="group" aria-label="Analog appointment clock" onPointerDown={e => {
         const hand = (e.target as Element).getAttribute("data-hand");
