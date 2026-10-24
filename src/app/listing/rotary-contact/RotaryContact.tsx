@@ -62,12 +62,19 @@ export function RotaryContact() {
     </>
     <button type="button" disabled={number.length !== 10 || onCall} onClick={async () => {
       if (!await requireCaptcha("contact-agent")) return;
+      const hangUp = (text: string) => { setOnCall(false); setMessage(text); };
+      const ring = new Audio("/audio/phone-ringing.mp3");
       const call = new Audio("/audio/tung-tung-sahur.mp3");
-      call.onended = () => { setOnCall(false); setMessage("Tung Tung Sahur hung up. Your rent question went unanswered."); };
-      call.onerror = () => { setOnCall(false); setMessage("Tung Tung Sahur hung up."); };
+      ring.onended = () => {
+        setMessage("Connected to your agent, Tung Tung Sahur...");
+        call.play().catch(() => hangUp("Tung Tung Sahur hung up before you could hear him."));
+      };
+      ring.onerror = () => hangUp("Nobody picked up.");
+      call.onended = () => hangUp("Tung Tung Sahur hung up. Your rent question went unanswered.");
+      call.onerror = () => hangUp("Tung Tung Sahur hung up.");
       setOnCall(true);
-      setMessage("Connected to your agent, Tung Tung Sahur...");
-      call.play().catch(() => { setOnCall(false); setMessage("Tung Tung Sahur hung up before you could hear him."); });
+      setMessage("Ringing...");
+      ring.play().catch(() => hangUp("Nobody picked up."));
     }}>{onCall ? "On the line..." : "Call the agent about rent"}</button>
     <p role="status">{message}</p>
   </section>;
