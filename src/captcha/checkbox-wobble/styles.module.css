@@ -21,8 +21,7 @@
   border-radius: var(--radius-sm);
   color: var(--ink);
   background: var(--surface);
-  transform: translateY(-50%);
-  transition: left 0.18s ease-out, top 0.18s ease-out;
+  transition: left 0.18s ease-out, top 0.18s ease-out, transform 0.18s ease-out;
   white-space: nowrap;
 }
 

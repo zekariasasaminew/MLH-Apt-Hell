@@ -41,7 +41,7 @@ export function CheckboxRound({ onPass, compact = false }: RoundProps & { compac
         <button
           type="button"
           className={styles.box}
-          style={{ left: `${SPOTS[spot].left}%`, top: `${SPOTS[spot].top}%` }}
+          style={{ left: `${SPOTS[spot].left}%`, top: `${SPOTS[spot].top}%`, transform: `translate(-${SPOTS[spot].left}%, -50%)` }}
           role="checkbox"
           aria-checked={checked}
           onClick={handleClick}
