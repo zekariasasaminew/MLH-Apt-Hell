@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Suspense } from "react";
 import { AnnoyanceHost } from "@/annoyances/AnnoyanceHost";
+import { CaptchaProvider } from "@/captcha/CaptchaProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} ${displayFace.variable}`}>
       <body>
-        {children}
+        <CaptchaProvider>{children}</CaptchaProvider>
         <Suspense>
           <AnnoyanceHost />
         </Suspense>

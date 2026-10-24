@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { asPurchaseListing, purchaseListings, type MarketMode } from "@/data/property-market";
 import { MarketProvider } from "./_lib/MarketContext";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import { cities, listings } from "@/data/listings";
 import { applyRentFilters, paginate, PAGE_SIZE, type RentFilters } from "@/filters/rent-filters";
 import { useRentFilters } from "@/filters/useRentFilters";
@@ -48,6 +49,7 @@ export function RentPage({ mode = "rent" }: { mode?: MarketMode }) {
 function MarketResults({ mode }: { mode: MarketMode }) {
   const { filters, setFilters, clearFilters } = useRentFilters();
   const reducedMotion = useReducedMotion();
+  const { requireCaptcha } = useCaptcha();
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -144,7 +146,9 @@ function MarketResults({ mode }: { mode: MarketMode }) {
   return (
     <div className={`${styles.root} ${geo.geo}`} data-rent="root">
       <GeocitiesBanner mode={mode} />
-      <FilterBar filters={filters} setFilters={setFilters} onSaveSearch={() => setSaveOpen(true)} />
+      <FilterBar filters={filters} setFilters={setFilters} onSaveSearch={async () => {
+          if (await requireCaptcha("save-search")) setSaveOpen(true);
+        }} />
       <div className={styles.split}>
         <div className={`${styles.mapPane} ${mobileView === "map" ? styles.paneShown : ""}`}>
           <RentMapLoader

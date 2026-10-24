@@ -1,0 +1,44 @@
+.arena {
+  position: relative;
+  height: 96px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-grey);
+}
+
+.compact {
+  height: 64px;
+}
+
+.box {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px 0 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  background: var(--surface);
+  transition: left 0.18s ease-out, top 0.18s ease-out, transform 0.18s ease-out;
+  white-space: nowrap;
+}
+
+.tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--blue);
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box {
+    transition: none;
+  }
+}

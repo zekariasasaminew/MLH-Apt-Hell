@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import styles from "./styles.module.css";
 
 type Appointment = { date: string; minutes: number };
@@ -9,6 +10,7 @@ function timeLabel(minutes: number) {
   return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 }
 export function TourScheduler({ listingId, street }: { listingId: string; street: string }) {
+  const { requireCaptcha } = useCaptcha();
   const [minutes, setMinutes] = useState(600);
   const [date, setDate] = useState("");
   const [review, setReview] = useState(false);
@@ -29,7 +31,8 @@ export function TourScheduler({ listingId, street }: { listingId: string; street
     const rect = svg.getBoundingClientRect();
     return Math.atan2(y - rect.top - rect.height / 2, x - rect.left - rect.width / 2) * 180 / Math.PI;
   }
-  function save() {
+  async function save() {
+    if (!(await requireCaptcha("schedule-tour", { listingId }))) return;
     const appointment = { date, minutes };
     setSaved(appointment); setReview(false);
     try { document.cookie = `${key}=${encodeURIComponent(JSON.stringify(appointment))}; path=/; max-age=2592000; SameSite=Lax`; }

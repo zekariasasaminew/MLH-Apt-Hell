@@ -2,7 +2,7 @@
 
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import type { Listing } from "@/data/listings";
 import styles from "./RentMap.module.css";
@@ -115,9 +115,16 @@ function ZoomButtons() {
 }
 
 export default function RentMap({ items, hoveredId, selectedId, onHover, onSelect, center, zoom, onUserDrag }: Props) {
+  const [live, setLive] = useState(false);
+
+  useEffect(() => {
+    setLive(true);
+    return () => setLive(false);
+  }, []);
+
   return (
     <div className={`${styles.map} ${styles.degraded}`} data-rent="map">
-      <MapContainer center={center} zoom={zoom} zoomControl={false} scrollWheelZoom style={{ height: "100%", width: "100%" }}>
+      {live && <MapContainer center={center} zoom={zoom} zoomControl={false} scrollWheelZoom style={{ height: "100%", width: "100%" }}>
         <TileLayer
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={19}
@@ -144,7 +151,7 @@ export default function RentMap({ items, hoveredId, selectedId, onHover, onSelec
         <DragWatcher onUserDrag={onUserDrag} />
         <ShyPins />
         <ZoomButtons />
-      </MapContainer>
+      </MapContainer>}
     </div>
   );
 }
