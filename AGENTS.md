@@ -55,7 +55,7 @@ src/
     globals.css             design tokens (shared, edit rarely)
     page.tsx                homepage (Zillow clone)
     rent/                   /rent              rental search results (zekariasasaminew)
-    search/                 /search            (unclaimed placeholder, meant for Buy)
+    search/                 /search            Buy listings; ?type=sell is the simulated seller flow
     listing/[id]/           /listing/:id       (unclaimed placeholder)
     signin/                 /signin            (unclaimed placeholder)
     apply/                  /apply             (unclaimed placeholder)
@@ -141,6 +141,11 @@ Every effect is always on. Nothing is configurable.
 - Map: Leaflet with OpenStreetMap tiles, loaded client-only (`RentMapLoader.tsx`). Keep the attribution.
 
 ## The rent filter contract
+
+Buy and Sell use the existing `/search?type=buy` and `/search?type=sell` navigation links. Buy search uses GET
+parameters (`q`, `city`, `saleMax`, `sort`); its fictional sale prices are derived from the demo rentals in
+`src/app/search/market.ts`. Sell only uses in-memory state and publishes nothing. Legacy `/search?type=rent`
+links redirect to `/rent` while retaining their filters. Keep server search-parameter reads inside Suspense.
 
 All /rent filters live in the URL query string (`?city=moline-il&max=1200&sort=price-asc&page=2`), so Back, refresh
 and shared links work. Never keep filter state anywhere else.
