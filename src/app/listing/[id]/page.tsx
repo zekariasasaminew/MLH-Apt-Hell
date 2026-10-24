@@ -9,6 +9,7 @@ import { TourScheduler } from "../analog-tours/TourScheduler";
 import styles from "./page.module.css";
 import { ScratchGallery } from "../scratch-photos/ScratchGallery";
 import { RotaryContact } from "../rotary-contact/RotaryContact";
+import { GemmaRealityCheck } from "./GemmaRealityCheck";
 
 export function generateStaticParams() {
   return listings.map((listing) => ({ id: listing.id }));
@@ -27,6 +28,7 @@ export default async function ListingPage({ params, searchParams }: PageProps<"/
         <Suspense fallback={<h1>{listing.street}</h1>}>
           <ListingSummary listing={listing} searchParams={searchParams} />
         </Suspense>
+        <GemmaRealityCheck listing={{ id: listing.id, street: listing.street, photo: listing.photo }} />
         <TourScheduler key={id} listingId={id} street={listing.street} />
         <RotaryContact />
       </main>
@@ -47,3 +49,4 @@ async function ListingSummary({ listing, searchParams }: { listing: Listing } & 
     <Link className={styles.apply} href={`/apply?listing=${listing.id}${buy ? "&intent=buy" : ""}`}>Start a simulated application</Link>
   </section>;
 }
+
