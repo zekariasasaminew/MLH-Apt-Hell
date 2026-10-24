@@ -1,5 +1,6 @@
 "use client";
 
+import { useMarket } from "../_lib/MarketContext";
 import { useEffect, useRef, useState } from "react";
 import type { Listing } from "@/data/listings";
 import { absurdTagsFor } from "../_effects/absurd-tags";
@@ -23,6 +24,7 @@ const BASE_FEE = 899;
 
 /** Layers price creep, ghost listings, urgency badges, the income gate and absurd tags over the card. */
 export function ResultsGrid({ items, highlightedId, onHover }: Props) {
+  const mode = useMarket();
   const grid = useRef<HTMLUListElement>(null);
   const clicks = useRef<Record<string, number>>({});
   const timers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
@@ -104,7 +106,7 @@ export function ResultsGrid({ items, highlightedId, onHover }: Props) {
                   promoted ? null : (
                     <>
                       <div className={styles.income}>
-                        <span>Income must be 40x rent ({`$${(rent * 40).toLocaleString("en-US")}`}/yr)</span>
+                        <span>Income must be 40x {mode === "buy" ? "purchase price" : "rent"} ({`$${(rent * 40).toLocaleString("en-US")}`}/yr)</span>
                         {listing.applyInstantly && (
                           <button type="button" className={styles.applyButton} onClick={() => setIncomeFor(listing)}>
                             Apply instantly

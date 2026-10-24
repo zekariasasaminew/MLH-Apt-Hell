@@ -1,6 +1,17 @@
-.main {
-  min-height: calc(100vh - 80px);
-  padding: 0 16px;
-  background: var(--surface-grey);
-  overflow: hidden;
-}
+.main { min-height: calc(100vh - 80px); padding: 36px 24px 64px; background: var(--surface-grey); }
+.seller { max-width: 760px; margin: auto; padding: 32px; background: white; border: 1px solid var(--border); border-radius: 14px; }
+.seller h1 { font: 800 clamp(30px, 5vw, 52px)/1.15 var(--font-display); margin: 12px 0; }
+.seller p { margin: 12px 0; }
+.eyebrow { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); }
+.field { display: grid; gap: 6px; margin: 24px 0; font-size: 14px; font-weight: 600; }
+.field input, .field select { min-height: 44px; max-width: 100%; padding: 10px; font: inherit; border: 1px solid var(--border-strong); border-radius: 6px; background: white; color: var(--ink); }
+.primary, .seller button { display: inline-block; padding: 11px 16px; min-height: 44px; margin: 8px 10px 8px 0; background: var(--blue); color: white; border: 0; border-radius: 6px; font: inherit; cursor: pointer; }
+.seller a { margin-right: 10px; }
+.seller button:disabled { opacity: .4; cursor: default; }
+.seller button:focus-visible, .seller a:focus-visible { outline: 3px solid #cb6f00; outline-offset: 3px; }
+.check { display: flex; align-items: start; gap: 10px; margin: 20px 0; }
+.check input { width: 20px; height: 20px; flex: none; }
+.quote { margin: 24px 0; padding: 24px; background: #edf3ff; border-radius: 10px; }
+.quote strong { display: block; font-size: 38px; line-height: 1.4; }
+.loading { padding: 40px; }
+@media (max-width: 640px) { .main { padding: 24px 12px; } .seller { padding: 20px; } .field { min-width: 0; } }

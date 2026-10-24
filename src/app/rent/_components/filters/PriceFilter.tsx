@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { applyRentFilters } from "@/filters/rent-filters";
 import { listings } from "@/data/listings";
+import { purchaseListings } from "@/data/property-market";
+import { useMarket } from "../../_lib/MarketContext";
 import slotStyles from "./PriceFilter.module.css";
 import type { FilterControlProps } from "@/filters/useRentFilters";
 import { FilterPopover } from "../FilterPopover";
@@ -20,6 +22,8 @@ function summary({ minRent, maxRent }: FilterControlProps["filters"]) {
 
 /** Price popover with a plain minimum and a slot machine for the maximum. */
 export function PriceFilter({ filters, setFilters }: FilterControlProps) {
+  const mode = useMarket();
+  const steps = mode === "buy" ? STEPS.map(n => n * 100) : STEPS;
   return (
     <FilterPopover label={summary(filters)} active={filters.minRent !== undefined || filters.maxRent !== undefined} minWidth={154}>
       <div className={styles.row}>
@@ -30,7 +34,7 @@ export function PriceFilter({ filters, setFilters }: FilterControlProps) {
             onChange={(event) => setFilters({ minRent: event.target.value ? Number(event.target.value) : undefined })}
           >
             <option value="">No min</option>
-            {STEPS.map((step) => (
+            {steps.map((step) => (
               <option key={step} value={step}>
                 {money(step)}
               </option>
@@ -44,9 +48,12 @@ export function PriceFilter({ filters, setFilters }: FilterControlProps) {
 }
 
 function SlotMachine({ filters, setFilters }: FilterControlProps) {
-  const initial = String(Math.min(99999, Math.round(filters.maxRent ?? 2500))).padStart(5, "0").split("").map(Number);
+  const mode = useMarket();
+  const reelCount = mode === "buy" ? 7 : 5;
+  const defaultBudget = mode === "buy" ? 350000 : 2500;
+  const initial = String(Math.min(10 ** reelCount - 1, Math.round(filters.maxRent ?? defaultBudget))).padStart(reelCount, "0").split("").map(Number);
   const [digits, setDigits] = useState(initial);
-  const [locked, setLocked] = useState<boolean[]>(Array(5).fill(false));
+  const [locked, setLocked] = useState<boolean[]>(Array(reelCount).fill(false));
   const [spinning, setSpinning] = useState<number[]>([]);
   const [muted, setMuted] = useState(true);
   const [feedback, setFeedback] = useState("Pull the lever. Your budget is now a game of chance.");
@@ -78,19 +85,19 @@ function SlotMachine({ filters, setFilters }: FilterControlProps) {
     timers.current.push(timer);
   }
   const budget = Number(digits.join(""));
-  const count = applyRentFilters(listings, { ...filters, maxRent: budget }).length;
-  return <div className={slotStyles.machine}>
-    <h3>HELL•O•JACKPOT</h3><p>Maximum monthly rent · five digits, zero financial advice</p>
+  const count = applyRentFilters(mode === "buy" ? purchaseListings : listings, { ...filters, maxRent: budget }).length;
+  return <div className={slotStyles.machine} data-market={mode}>
+    <h3>HELL•O•JACKPOT</h3><p>{mode === "buy" ? "Maximum purchase price · seven digits" : "Maximum monthly rent · five digits"}, zero financial advice</p>
     <div className={slotStyles.reels}>{digits.map((digit, i) => <div key={i} className={slotStyles.column}>
       <div className={`${slotStyles.window} ${spinning.includes(i) ? slotStyles.spinning : ""}`} aria-label={`Digit ${i + 1}: ${digit}`}><span>{digit}</span></div>
       <button disabled={running.current} aria-pressed={locked[i]} onClick={() => setLocked(current => current.map((lock, index) => i === index ? !lock : lock))}>{locked[i] ? "🔒" : "Lock"}</button>
       <button disabled={locked[i] || spinning.length > 0} onClick={() => spin(i)} aria-label={`Spin digit ${i + 1}`}>Spin</button>
       <button disabled={locked[i] || spinning.length > 0} onClick={() => setDigits(current => current.map((value, index) => index === i ? (value + 1) % 10 : value))} aria-label={`Advance digit ${i + 1} by one`}>+1</button>
     </div>)}<button className={slotStyles.lever} disabled={spinning.length > 0} onClick={() => spin()} aria-label="Pull the slot machine lever">🔴<br />┃<br />SPIN</button></div>
-    <output aria-live="polite">Budget: ${budget.toLocaleString("en-US")}/month</output>
-    <p role="status">{feedback}</p><p>{count === 0 ? "Congratulations! You can now afford absolutely nothing matching these filters." : `${count} actual rentals match this budget and your other filters.`}</p>
+    <output aria-live="polite">Budget: ${budget.toLocaleString("en-US")}{mode === "rent" ? "/month" : ""}</output>
+    <p role="status">{feedback}</p><p>{count === 0 ? "Congratulations! You can now afford absolutely nothing matching these filters." : `${count} actual {mode === "buy" ? "homes" : "rentals"} match this budget and your other filters.`}</p>
     <button disabled={spinning.length > 0} onClick={() => setFilters({ maxRent: budget })}>Confirm ${budget.toLocaleString("en-US")} maximum</button>
-    <button onClick={() => { timers.current.forEach(clearInterval); timers.current = []; running.current = false; setSpinning([]); setLocked(Array(5).fill(false)); setDigits([0, 2, 5, 0, 0]); setFeedback("Machine reset. Your dignity is non-refundable."); }}>Reset machine</button>
+    <button onClick={() => { timers.current.forEach(clearInterval); timers.current = []; running.current = false; setSpinning([]); setLocked(Array(reelCount).fill(false)); setDigits(String(defaultBudget).padStart(reelCount, "0").split("").map(Number)); setFeedback("Machine reset. Your dignity is non-refundable."); }}>Reset machine</button>
     <button onClick={() => setFilters({ maxRent: undefined })}>Remove maximum</button><button onClick={() => setMuted(m => !m)}>Sound: {muted ? "muted" : "on"}</button>
     <small>Use +1 to nudge any unlocked reel to an exact budget.</small>
   </div>;

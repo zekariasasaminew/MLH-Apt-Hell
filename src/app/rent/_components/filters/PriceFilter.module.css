@@ -11,6 +11,10 @@
 .spinning span { display: inline-block; animation: reel .13s linear infinite; }
 .lever { background: #c5a465; color: #36162a; font-size: 12px; }
 .machine small { display: block; margin-top: 12px; }
+.machine { width: min(520px, calc(100vw - 64px)); }
+.machine button { padding: 8px; margin: 4px; border: 1px solid var(--border); border-radius: 6px; }
+.machine[data-market="buy"] .window { font-size: 32px; }
+@media (max-width: 450px) { .machine[data-market="buy"] .window { font-size: 23px; } }
 @keyframes reel { from { transform: translateY(-45%); } to { transform: translateY(45%); } }
 @media (prefers-reduced-motion: reduce) { .spinning span { animation: none; } }
 @media (max-width: 450px) { .machine { padding: 12px 4px; } .reels { gap: 2px; } .window { font-size: 32px; } .column button { font-size: 10px; padding: 4px; } }
