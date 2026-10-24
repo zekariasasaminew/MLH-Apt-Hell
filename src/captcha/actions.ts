@@ -1,5 +1,7 @@
 /** The single map of gated action to CAPTCHA id. Call sites use the action name, never the id. */
 export const actions = {
+  "cancel-subscription": "cancel-boss",
+  "change-password": "password-boss",
   "contact-agent": "landlord-gauntlet",
   "enter-rent": "checkbox-wobble",
   "open-listing": "house-grid",
