@@ -1,5 +1,7 @@
 .header {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   height: 80px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -8,9 +10,12 @@
   background: var(--surface);
   border-bottom: 1px solid #e8e8ec;
   font-size: 15px;
+  transition: border-color 400ms ease, box-shadow 400ms ease;
 }
 
 .side {
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
 }
@@ -49,8 +54,152 @@
 }
 
 .logo {
+  position: relative;
+  z-index: 4;
   display: flex;
   justify-content: center;
+}
+
+.inferno {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.infernoHeader {
+  border-bottom-color: #ff3d00;
+  box-shadow: 0 7px 18px #ff3d00, inset 0 -15px 25px rgba(255, 55, 0, 0.6);
+  animation: headerIgnition 11s linear forwards;
+}
+
+.infernoHeader .inferno {
+  opacity: 1;
+}
+
+.infernoHeader .link {
+  animation: linkScorch 9s linear forwards;
+}
+
+.infernoHeader .link::after {
+  height: 4px;
+  background: linear-gradient(90deg, #ffea00, #ff2a00, #ffea00);
+  box-shadow: 0 -4px 8px #ff4d00;
+  transform: scaleX(1);
+  animation: underlineFire 480ms ease-in-out infinite alternate;
+}
+
+.shellTyrant {
+  position: absolute;
+  right: 1.5%;
+  bottom: 7px;
+  font-size: 43px;
+  filter: drop-shadow(0 0 7px #ffea00) drop-shadow(4px 3px 0 #641000);
+  transform: translateX(125%) rotate(-10deg);
+  animation: tyrantArrives 900ms 250ms cubic-bezier(.2,.9,.2,1.2) forwards, tyrantStomp 520ms 1.2s ease-in-out infinite alternate;
+}
+
+.shellTyrant i {
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  color: #ffe600;
+  font: 900 22px/1 serif;
+  text-shadow: 2px 2px #a80000;
+}
+
+.fireball {
+  position: absolute;
+  right: 25px;
+  z-index: 0;
+  font-size: 31px;
+  opacity: 0;
+  filter: drop-shadow(0 0 8px #ffea00);
+}
+
+.fireballOne { top: 7px; animation: fireballAttack 2.8s 1.1s ease-in forwards; }
+.fireballTwo { top: 34px; animation: fireballAttack 3.4s 2.6s ease-in forwards; }
+.fireballThree { top: 18px; animation: fireballAttack 4.1s 4.5s ease-in forwards; }
+
+.burnNotice {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  color: #fff07a;
+  font: 900 9px/1 monospace;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px #6b0000;
+  opacity: 0;
+  transform: translateX(-50%);
+  animation: warningAppears 300ms 5.5s steps(2, end) forwards, warningBlink 500ms 5.8s steps(2, end) infinite;
+}
+
+.embers {
+  position: absolute;
+  inset: 0;
+  color: #ffe600;
+  font-size: 22px;
+  letter-spacing: 18px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: emberStorm 4s 1.5s linear infinite;
+}
+
+.flameLine {
+  position: absolute;
+  right: -15px;
+  bottom: -36px;
+  left: -15px;
+  display: flex;
+  justify-content: space-around;
+  font-size: clamp(25px, 3vw, 42px);
+  filter: drop-shadow(0 -5px 8px #ff2600);
+  animation: flamesRise 5.5s 600ms cubic-bezier(.15,.8,.2,1) forwards;
+}
+
+.flameLine span {
+  display: block;
+  animation: flameDance 420ms ease-in-out infinite alternate;
+}
+
+.flameLine span:nth-child(3n) { animation-delay: 120ms; transform: scale(1.25); }
+.flameLine span:nth-child(4n) { animation-delay: 240ms; transform: scale(0.78); }
+
+@keyframes headerIgnition {
+  0% { background: var(--surface); }
+  12% { background: linear-gradient(90deg, #fff 0%, #fff1a1 100%); }
+  35% { background: linear-gradient(100deg, #fff2a3 0%, #ff8b1f 68%, #7b1200 100%); }
+  65% { background: linear-gradient(105deg, #ff9418 0%, #8e1800 48%, #260300 100%); }
+  100% { background: linear-gradient(110deg, #250400, #5b0b00 48%, #110100); }
+}
+
+@keyframes linkScorch {
+  0%, 15% { color: var(--ink); text-shadow: none; }
+  40% { color: #5e1700; text-shadow: 0 0 4px #fff100; }
+  100% { color: #fff0a8; text-shadow: 1px 1px #c51d00, 0 0 7px #ff5b00; }
+}
+
+@keyframes tyrantArrives { to { transform: translateX(0) rotate(-10deg); } }
+@keyframes tyrantStomp { from { margin-bottom: 0; } to { margin-bottom: 5px; } }
+
+@keyframes fireballAttack {
+  0% { opacity: 0; transform: translateX(0) rotate(0); }
+  8% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-105vw) rotate(-960deg) scale(1.8); }
+}
+
+@keyframes flamesRise { to { bottom: -6px; } }
+@keyframes flameDance { from { translate: 0 3px; rotate: -4deg; } to { translate: 0 -5px; rotate: 5deg; } }
+@keyframes underlineFire { from { filter: brightness(0.9); } to { filter: brightness(1.5); } }
+@keyframes warningAppears { to { opacity: 1; } }
+@keyframes warningBlink { 50% { opacity: 0.35; } }
+@keyframes emberStorm {
+  0% { opacity: 0; transform: translate(35px, 70px) rotate(0); }
+  20% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(-80px, -70px) rotate(10deg); }
 }
 
 @media (max-width: 1100px) {
@@ -68,4 +217,29 @@
   .side:not(.right) .link:nth-child(n + 2) {
     display: none;
   }
+
+  .shellTyrant { right: 11%; font-size: 34px; }
+  .burnNotice { display: none; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .infernoHeader,
+  .infernoHeader .link,
+  .infernoHeader .link::after,
+  .shellTyrant,
+  .fireball,
+  .burnNotice,
+  .embers,
+  .flameLine,
+  .flameLine span {
+    animation: none;
+  }
+
+  .infernoHeader { background: #3c0800; }
+  .infernoHeader .link { color: #fff0a8; text-shadow: 1px 1px #c51d00; }
+  .shellTyrant { transform: none; }
+  .fireball, .embers { display: none; }
+  .flameLine { bottom: -6px; }
+}
+
+
