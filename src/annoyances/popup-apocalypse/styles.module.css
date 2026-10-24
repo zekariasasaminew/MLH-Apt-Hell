@@ -1,18 +1,111 @@
-.popup { position: fixed; z-index: 120; width: min(310px, calc(100vw - 32px)); max-height: 42vh; overflow: auto; padding: 20px; background: #fff; border: 2px solid #1554be; border-radius: 12px; box-shadow: 0 12px 36px #10224940; font-size: 14px; }
-.popup h2 { font-size: 21px; margin: 8px 0; }
+.popup {
+  --ad-ink: #202034;
+  --ad-accent: #4d32ca;
+  position: fixed;
+  z-index: 120;
+  width: min(340px, calc(100vw - 32px));
+  max-height: 42dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 22px;
+  color: var(--ad-ink);
+  background: #fff;
+  border: 1px solid currentColor;
+  border-radius: 16px;
+  box-shadow: 0 16px 48px #0e0a3438;
+  font: 14px/1.45 Arial, sans-serif;
+  animation: arrive .3s ease-out both;
+}
+.popup h2 { position: relative; font-size: 27px; line-height: 1.05; letter-spacing: -.7px; margin: 14px 0 10px; }
 .popup p { margin: 10px 0; }
-.popup button { padding: 8px 12px; border: 1px solid #bbb; border-radius: 6px; background: #f2f6ff; cursor: pointer; margin: 3px; }
-.popup button:disabled { opacity: .45; cursor: default; }
-.position0 { top: 90px; left: 16px; }
-.position1 { top: 90px; right: 16px; }
-.position2 { bottom: 90px; left: 16px; }
-.position3 { bottom: 18px; right: 16px; }
-.position4 { top: 45%; left: calc(50% - 155px); }
-.terms { height: 100px; overflow: auto; border: 1px solid #ccc; padding: 8px; }
-.runway { height: 45px; }
-.drag { touch-action: none; }
-.trash { position: fixed; z-index: 121; bottom: 12px; left: 45%; padding: 14px; background: #e9ffec; border: 2px dashed #278a42; }
-.accessible { font-size: 11px; }
-.demo { position: fixed; bottom: 8px; left: 220px; z-index: 100; padding: 6px; font-size: 11px; }
-@media (max-width: 680px) { .popup { width: calc(50vw - 20px); padding: 10px; font-size: 12px; } .popup h2 { font-size: 16px; } .position4 { left: 25%; } }
-@media (prefers-reduced-motion: reduce) { .runway button { margin-left: 0 !important; } }
+.popup button { padding: 9px 12px; border: 1px solid currentColor; border-radius: 7px; color: var(--ad-ink); background: #fff; cursor: pointer; margin: 3px; font: 700 12px/1.3 Arial, sans-serif; }
+.popup button:hover { box-shadow: 2px 2px 0 var(--ad-accent); }
+.popup button:focus-visible, .terms:focus-visible { outline: 3px solid var(--ad-accent); outline-offset: 3px; }
+.popup button:disabled { opacity: .45; cursor: default; box-shadow: none; }
+.adIdentity { display: flex; align-items: center; gap: 10px; font: 700 9px/1.3 monospace; letter-spacing: 1.1px; }
+.adIcon { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border: 1px solid currentColor; border-radius: 50%; font-size: 22px; }
+.tag { display: inline-block; margin-top: 16px; padding: 4px 7px; border-radius: 3px; font: 700 9px/1.3 monospace; letter-spacing: .7px; }
+.adCopy { font-size: 15px; }
+.adDisclosure { display: block; margin: 14px 0 6px; font: 9px/1.3 monospace; letter-spacing: .8px; opacity: .8; }
+.popup .accessible { display: block; margin: 4px 0 0; padding: 7px 0; min-height: 28px; border: 0; border-radius: 0; background: transparent; color: inherit; font: 10px/1.4 Arial, sans-serif; text-align: left; text-decoration: underline; text-underline-offset: 3px; opacity: .85; }
+.popup .accessible:hover { box-shadow: none; opacity: 1; }
+.position0 { top: 96px; left: 20px; }
+.position1 { top: 96px; right: 20px; }
+.position2 { bottom: 22px; left: 20px; }
+.position3 { bottom: 22px; right: 20px; }
+.position4 { top: 30%; left: calc(50% - 170px); z-index: 122; }
+/* Luxury upsell: velvet, gold, and an unreasonable amount of confidence. */
+.theme0 { --ad-ink: #fff5d9; --ad-accent: #eac57e; background: radial-gradient(ellipse at 100% 0, #6d4289 0, transparent 55%), #21142f; border-color: #b78b52; border-radius: 22px 22px 4px 22px; }
+.theme0 .adIcon { color: #f5cf8a; border-color: #b78b52; }
+.theme0 .tag { color: #eed099; border: 1px solid #997947; }
+.theme0 h2 { font-family: Georgia, serif; font-size: 34px; font-weight: 400; letter-spacing: -1.5px; }
+.theme0 .adCopy { color: #e9d8ee; }
+.metric { color: #f2cf88; font: italic 76px/.9 Georgia, serif; letter-spacing: -6px; margin: 18px 0; }
+.metric > span { font-size: 38px; letter-spacing: -2px; }
+.metric small { display: block; margin-top: 10px; font: 8px/1.4 monospace; letter-spacing: 2.5px; }
+.runway { height: 44px; border-top: 1px solid #bb925244; margin-top: 14px; padding-top: 5px; }
+.theme0 .runway button { color: #261634; background: #f2cf88; border: 0; border-radius: 50%; width: 32px; height: 32px; padding: 0; font-size: 22px; }
+/* Newsletter: a pink bureaucratic file, complete with a ridiculous stamp. */
+.theme1 { --ad-ink: #512c30; --ad-accent: #c44863; background: repeating-linear-gradient(0deg, transparent 0 23px, #d7c6b51c 23px 24px), #fff5e7; border: 1px solid #cbb6a0; border-top: 8px solid #cc5673; border-radius: 2px; box-shadow: 7px 7px 0 #e7a3b5, 0 16px 40px #32132330; }
+.theme1 .adIcon { border: 0; font: 36px Georgia, serif; }
+.theme1 .tag { background: #f9d5df; color: #80384d; }
+.theme1 h2 { max-width: 205px; font: 700 30px/.95 Georgia, serif; letter-spacing: -1px; }
+.documentStamp { float: right; padding: 5px; margin: -14px -5px 6px 6px; border: 2px solid #a33a50; color: #a33a50; transform: rotate(9deg); font: 700 8px/1.3 monospace; text-align: center; }
+.terms { clear: both; height: 100px; overflow: auto; border: 1px solid #d7b9ab; padding: 10px; background: #fffaf2; color: #694d47; font: 10px/1.5 monospace; }
+.theme1 > button:not(.accessible) { background: #823c52; color: #fff7ee; border-color: #823c52; border-radius: 2px; }
+/* Warranty: a suspicious desktop alert that wants to be recycled. */
+.theme2 { --ad-ink: #332314; --ad-accent: #e27a1b; padding-top: 0; background: #ffdf8e; border: 3px solid #3a271f; border-radius: 8px; box-shadow: 7px 7px 0 #31231d; }
+.windowBar { display: flex; justify-content: space-between; gap: 8px; margin: 0 -22px 18px; padding: 7px 12px; color: #ffdda0; background: #3a271f; font: 10px/1.2 monospace; }
+.theme2 .adIdentity { color: #7b3b13; }
+.theme2 .adIcon { border: 0; font-size: 30px; }
+.theme2 .tag { background: #b23a1d; color: #fff9e8; }
+.theme2 h2 { font: 900 29px/.97 monospace; letter-spacing: -1.5px; text-transform: uppercase; }
+.theme2 .drag { touch-action: none; width: 100%; margin: 10px 0; padding: 14px 8px; background: repeating-linear-gradient(135deg, #fff5d4 0 8px, #ffe9a8 8px 16px); border: 2px dashed #644127; border-radius: 0; cursor: grab; }
+/* Quiz: an acid-green exam from a very unserious licensing board. */
+.theme3 { --ad-ink: #213d24; --ad-accent: #7650d8; background: #e0fa96; border: 2px solid #25452c; border-radius: 30px 4px 30px 4px; box-shadow: 7px 7px 0 #7650d8; }
+.theme3 .adIcon { background: #29492c; color: #e0fa96; }
+.theme3 .tag { background: #7450bd; color: white; border-radius: 20px; }
+.theme3 h2 { font-size: 30px; font-weight: 900; letter-spacing: -1.5px; }
+.theme3 .adCopy { font-weight: 700; }
+.popup .answer { display: flex; align-items: center; gap: 10px; width: 100%; margin: 6px 0; padding: 8px 10px; text-align: left; background: #f4ffd9; border: 1px solid #59783f; border-radius: 8px; font-weight: 400; }
+.answer > span { display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 5px; background: #28482c; color: #ecffca; font: 700 11px monospace; }
+/* Prize: a loud, perforated sweepstakes ticket with three deeply unhelpful Xs. */
+.theme4 { --ad-ink: #541341; --ad-accent: #ed39a3; background: radial-gradient(circle at 100% 0, #fff7a9 0, transparent 55%), #ffb9df; border: 3px dashed #9c236c; border-radius: 0; box-shadow: 9px 9px 0 #7c296b, 0 18px 60px #29103260; text-align: center; }
+.theme4 .adIdentity { justify-content: center; }
+.theme4 .adIcon { border: 0; color: #9d236c; }
+.theme4 .tag { background: #fff16b; border: 1px solid #a27124; transform: rotate(-3deg); }
+.theme4 h2 { margin-bottom: 18px; font-size: 49px; font-weight: 900; letter-spacing: -3px; text-transform: uppercase; }
+.jackpot { display: flex; justify-content: center; gap: 8px; }
+.jackpot span { display: grid; place-items: center; width: 55px; height: 65px; background: #fff8eb; border: 2px solid #ae477c; border-radius: 8px; box-shadow: inset 0 4px 0 #eec7db; font: italic 700 45px/1 Georgia, serif; }
+.fakeButtons { display: flex; justify-content: center; gap: 8px; margin: 14px 0; }
+.fakeButtons button { width: 46px; height: 42px; padding: 0; background: #8f255f; color: white; border-color: #8f255f; font-size: 26px; border-radius: 50%; }
+.theme4 .accessible { text-align: center; width: 100%; }
+.trash { position: fixed; display: flex; align-items: center; gap: 8px; z-index: 123; bottom: 16px; left: calc(50% - 87px); padding: 12px 14px; border: 2px dashed #80e4b6; border-radius: 12px; background: #193f38; color: #d0ffe3; box-shadow: 0 8px 25px #071e3033; font: 700 10px/1.5 monospace; }
+.trash > span:first-child { font-size: 25px; }
+.trash small { font-weight: 400; font-size: 9px; }
+.demo { position: fixed; bottom: 8px; left: 220px; z-index: 100; padding: 7px 10px; font: 11px monospace; border: 1px solid #7650d8; border-radius: 8px; color: #4d258a; background: #f6eaff; }
+@keyframes arrive { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+@media (max-width: 760px) {
+  .popup { width: calc(50vw - 18px); max-height: calc(47dvh - 24px); padding: 12px; font-size: 12px; border-radius: 8px; }
+  .popup h2, .theme1 h2, .theme2 h2, .theme3 h2 { font-size: 20px; letter-spacing: -.7px; }
+  .adIdentity { gap: 5px; font-size: 7px; letter-spacing: .3px; }
+  .adIcon { width: 24px; height: 24px; font-size: 18px; }
+  .tag { font-size: 7px; margin-top: 10px; }
+  .adCopy { font-size: 12px; }
+  .position0, .position1 { top: 84px; }
+  .position0, .position2 { left: 8px; }
+  .position1, .position3 { right: 8px; }
+  .position2, .position3 { bottom: 12px; }
+  .position4 { width: min(310px, calc(100vw - 32px)); left: max(16px, calc(50% - 155px)); top: 25%; max-height: 60dvh; }
+  .metric { font-size: 54px; letter-spacing: -4px; }
+  .metric small { font-size: 6px; letter-spacing: 1px; }
+  .documentStamp { font-size: 6px; }
+  .windowBar { margin: 0 -12px 12px; font-size: 8px; padding: 7px; }
+  .theme4 h2 { font-size: 38px; }
+  .popup .answer { font-size: 11px; gap: 6px; padding: 7px; }
+  .trash { bottom: 6px; left: calc(50% - 64px); gap: 4px; padding: 8px; font-size: 8px; }
+  .trash > span:first-child { font-size: 19px; }
+  .trash small { font-size: 7px; }
+  .demo { left: auto; right: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .popup { animation: none; } .runway button { margin-left: 0 !important; } }
