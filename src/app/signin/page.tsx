@@ -21,8 +21,6 @@ export default function SignInPage() {
   const [demoMode, setDemoMode] = useState(false);
   const [appeals, setAppeals] = useState(0);
   const [exemptions, setExemptions] = useState(false);
-  const [mortgageStep, setMortgageStep] = useState(false);
-  const [housePlaced, setHousePlaced] = useState(false);
   const [complete, setComplete] = useState(false);
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   // The hackathon build is intentionally deterministic so prerenders and demos agree.
@@ -36,7 +34,7 @@ export default function SignInPage() {
   const strengthIndex = Math.min(STRENGTHS.length - 1, Math.floor((passedCount / PASSWORD_RULES.length) * STRENGTHS.length));
 
   useEffect(() => {
-    if (!started || expired || mortgageStep) return;
+    if (!started || expired || complete) return;
     interval.current = setInterval(() => {
       setSeconds((current) => {
         if (current <= 1) {
@@ -48,7 +46,7 @@ export default function SignInPage() {
       });
     }, 1000);
     return () => { if (interval.current) clearInterval(interval.current); };
-  }, [started, expired, mortgageStep]);
+  }, [started, expired, complete]);
 
   useEffect(() => {
     if (!allVisiblePassed || visibleCount >= PASSWORD_RULES.length) return;
@@ -72,7 +70,6 @@ export default function SignInPage() {
     setExpired(false);
     setAppeals(0);
     setExemptions(false);
-    setMortgageStep(false);
   }
 
   function fileAppeal() {
@@ -93,7 +90,7 @@ export default function SignInPage() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!(allRulesPassed && name && email)) return fileAppeal();
-    if (await requireCaptcha("change-password")) setMortgageStep(true);
+    if (await requireCaptcha("change-password")) setComplete(true);
   }
 
   if (complete) {
@@ -102,7 +99,7 @@ export default function SignInPage() {
         <SiteHeader />
         <main className={styles.successPage}>
           <span aria-hidden="true">🏠💸🎉</span>
-          <p className={styles.eyebrow}>APPLICATION EMOTIONALLY APPROVED</p>
+          <p className={styles.eyebrow}>ACCOUNT EMOTIONALLY APPROVED</p>
           <h1>Congratulations! Your account has been created.</h1>
           <p>Unfortunately, you still cannot afford any of our houses.</p>
           <Link href="/" className={styles.homeLink}>Return to Hellow</Link>
@@ -131,7 +128,7 @@ export default function SignInPage() {
             <div className={styles.expired} role="alert"><h2>Your mortgage application expired due to excessive thinking.</h2><button onClick={restart}>Reapply for emotional financing</button></div>
           )}
 
-          {!expired && !mortgageStep && (
+          {!expired && (
             <form className={styles.gameGrid} onSubmit={submit}>
               <div className={styles.formCard}>
                 <label>Name<input required value={name} onChange={(event) => setName(event.target.value)} placeholder="Tenant-shaped person" /></label>
@@ -154,19 +151,6 @@ export default function SignInPage() {
                 {visibleCount < PASSWORD_RULES.length && <div className={styles.moreRules}>🔒 {PASSWORD_RULES.length - visibleCount} additional rules are hiding behind compliance.</div>}
               </aside>
             </form>
-          )}
-
-          {mortgageStep && (
-            <section className={styles.mortgageGame} aria-labelledby="mortgage-title">
-              <p className={styles.eyebrow}>FINAL EMOTIONAL CLOSING</p>
-              <h2 id="mortgage-title">Drag the tiny house into the oversized mortgage contract</h2>
-              <p>Keyboard and touch users may select the house, then approve the contract.</p>
-              <div className={styles.dragZone}>
-                <button draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", "house")} onClick={() => setHousePlaced(true)} className={housePlaced ? styles.housePlaced : styles.house}>🏠<span>{housePlaced ? "Property encumbered" : "Tiny house"}</span></button>
-                <div className={styles.contract} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (event.dataTransfer.getData("text/plain") === "house") setHousePlaced(true); }}><b>30-YEAR MORTGAGE CONTRACT</b><small>Page 1 of 67,000</small><span>{housePlaced ? "🏠 ACCEPTED" : "DROP ASSET HERE"}</span></div>
-              </div>
-              <button className={styles.submit} disabled={!housePlaced} onClick={() => setComplete(true)}>I am emotionally prepared for homeownership</button>
-            </section>
           )}
         </section>
       </main>
