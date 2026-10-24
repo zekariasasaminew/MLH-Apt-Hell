@@ -33,8 +33,10 @@ Product rules:
 
 - Next.js 16 (App Router, Turbopack, **Cache Components enabled**), React 19, TypeScript.
 - Plain CSS Modules plus the tokens in `src/app/globals.css`. No Tailwind, no UI libraries unless the team agrees.
-- **No database, no backend services.** State lives in the URL, cookies you name yourself, and in-memory React
-  state. Nothing is ever submitted anywhere real.
+- **No database.** State lives in the URL, cookies you name yourself, and in-memory React state.
+- The only server integration is the stateless `/api/gemma/inspect` proxy for the Gemma 4 hackathon feature. It may
+  read fictional in-repo listing data and images, never stores prompts or results, and must keep `GEMINI_API_KEY`
+  server-only.
 - Fake data lives in `src/data/listings.ts`. Photos come from `images.unsplash.com` via `next/image`.
 - Deployed on Vercel. Every PR gets a preview URL.
 
