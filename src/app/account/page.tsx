@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { AVATARS, PERSONALITIES, VOICE_LINES } from "./data";
 import { CancelSubscriptionFlow } from "./CancelSubscriptionFlow";
@@ -62,6 +63,7 @@ const AMENITIES = [
 ];
 
 export default function AccountPage() {
+  const { requireCaptcha } = useCaptcha();
   const [active, setActive] = useState<Section>("Profile");
   const [draft, setDraft] = useState<Draft>(DEFAULT_DRAFT);
   const [saved, setSaved] = useState<Draft>(DEFAULT_DRAFT);
@@ -296,7 +298,7 @@ export default function AccountPage() {
                 {active === "Login & Security" && (
                   <div className={styles.stack}>
                     <header className={styles.sectionHeader}><p className={styles.eyebrow}>FORTIFIED McMANSION</p><h2>Security, but with load-bearing copy</h2></header>
-                    <article className={styles.securityCard}><div><b>Password strength</b><p>Load-bearing</p></div><span>Adding 67 is emotionally strong but cryptographically unimpressive.</span><a href="/signin">Enter the password obstacle course →</a></article>
+                    <article className={styles.securityCard}><div><b>Password strength</b><p>Load-bearing</p></div><span>Adding 67 is emotionally strong but cryptographically unimpressive.</span><a href="/signin">Enter the password obstacle course →</a><button className={styles.secondaryButton} onClick={async () => { if (await requireCaptcha("change-password")) setVoiceLine("Password changed. Nothing was stored, as promised."); }}>Change password</button></article>
                     <article className={styles.securityCard}><div><b>Multi-factor authentication</b><p>Not configured</p></div><span>This state is shown plainly because security jokes stop at the label.</span><button className={styles.secondaryButton}>Configure MFA demo</button></article>
                     <article className={styles.securityCard}><div><b>Active session</b><p>Probably this computer</p></div><span>The smart refrigerator denies everything.</span><button className={styles.secondaryButton}>Review session</button></article>
                   </div>
