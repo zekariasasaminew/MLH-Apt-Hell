@@ -1,0 +1,21 @@
+.text {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.paper {
+  fill: #f1ece0;
+}
+
+.glyph {
+  fill: var(--ink-2);
+}
+
+.noise {
+  stroke: var(--ink-muted);
+  stroke-width: 1.5;
+  opacity: 0.6;
+}

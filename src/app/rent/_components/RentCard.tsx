@@ -4,6 +4,7 @@ import { useMarket } from "../_lib/MarketContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import type { Listing } from "@/data/listings";
 import styles from "./RentCard.module.css";
 
@@ -37,6 +38,7 @@ export function RentCard({
   cardRef,
 }: RentCardProps) {
   const mode = useMarket();
+  const { requireCaptcha } = useCaptcha();
   const [photoIndex, setPhotoIndex] = useState(0);
   const [saved, setSaved] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,7 +68,9 @@ export function RentCard({
           {listing.applyInstantly && !promoted && <span className={`${styles.badge} ${styles.blue}`}>Apply instantly</span>}
           {extraBadges}
         </div>
-        <button type="button" className={styles.heart} aria-label={`${saved ? "Unsave" : "Save"} ${listing.street}`} aria-pressed={saved} onClick={() => setSaved((value) => !value)}>
+        <button type="button" className={styles.heart} aria-label={`${saved ? "Unsave" : "Save"} ${listing.street}`} aria-pressed={saved} onClick={async () => {
+            if (await requireCaptcha("save-listing")) setSaved((value) => !value);
+          }}>
           <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
             <path
               d="M12 20.5 4.2 12.9a4.9 4.9 0 0 1 7-6.9l.8.8.8-.8a4.9 4.9 0 0 1 7 6.9L12 20.5Z"

@@ -1,0 +1,29 @@
+.scene {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.sky {
+  fill: #cfe0f5;
+}
+
+.gap {
+  fill: rgba(17, 17, 22, 0.25);
+  stroke: var(--ink-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.piece {
+  fill: #d9a066;
+  stroke: #7a3b2e;
+  stroke-width: 1.5;
+}
+
+.label {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}

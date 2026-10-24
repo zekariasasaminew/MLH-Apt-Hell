@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import styles from "./styles.module.css";
 
 export function RotaryContact() {
+  const { requireCaptcha } = useCaptcha();
   const [number, setNumber] = useState("");
   const [muted, setMuted] = useState(true);
   const [rotation, setRotation] = useState(0);
@@ -57,7 +59,7 @@ export function RotaryContact() {
       <output aria-live="polite">{number || "No digits dialed"} ({number.length}/10)</output>
       <button type="button" onClick={() => { setNumber(""); setMessage("The operator erased the entire number. Please redial."); }}>Ask operator to erase mistakes (all digits)</button>
     </>
-    <button type="button" disabled={number.length !== 10} onClick={() => setMessage("Request simulated! Our agent will call you back sometime between yesterday and the heat death of the universe.")}>Request a pretend callback</button>
+    <button type="button" disabled={number.length !== 10} onClick={async () => { if (await requireCaptcha("contact-agent")) setMessage("Request simulated! Our agent will call you back sometime between yesterday and the heat death of the universe."); }}>Request a pretend callback</button>
     <p role="status">{message}</p>
   </section>;
 }

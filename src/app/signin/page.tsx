@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { DEMO_PASSWORD, PASSWORD_RULES, validateRules } from "./password-rules";
 import styles from "./page.module.css";
@@ -9,6 +10,7 @@ import styles from "./page.module.css";
 const STRENGTHS = ["Homeless", "Renting a cardboard box", "Studio with six roommates", "Hellow Dreamer", "Pre-approved by an imaginary bank", "Suburban homeowner", "Landlord with generational wealth", "Real Estate Mogul"];
 
 export default function SignInPage() {
+  const { requireCaptcha } = useCaptcha();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -88,10 +90,10 @@ export default function SignInPage() {
     setSeconds(120);
   }
 
-  function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (allRulesPassed && name && email) setMortgageStep(true);
-    else fileAppeal();
+    if (!(allRulesPassed && name && email)) return fileAppeal();
+    if (await requireCaptcha("change-password")) setMortgageStep(true);
   }
 
   if (complete) {

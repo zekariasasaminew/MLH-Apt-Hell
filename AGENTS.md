@@ -70,6 +70,11 @@ src/
   filters/
     rent-filters.ts         RentFilters type, parse / serialize / apply / paginate (pure)
     useRentFilters.ts       URL-backed filter hook + FilterControlProps
+  captcha/
+    actions.ts              action name to CAPTCHA id (difficulty lives here)
+    registry.ts             list of every CAPTCHA (one line each)
+    CaptchaProvider.tsx     useCaptcha() and the modal
+    <captcha-id>/           one folder per CAPTCHA
   data/listings.ts          60 fake Quad Cities rentals + the cities list
 ```
 
@@ -167,6 +172,39 @@ and shared links work. Never keep filter state anywhere else.
   `setFilters({ city })` when the user confirms. Changing the props or the `RentFilters` shape is a contract change:
   say so in the PR and update this section.
 - City slugs and the city list come from `cities` in `src/data/listings.ts`.
+
+## CAPTCHAs
+
+Risky actions are gated by fake CAPTCHAs. Difficulty is fixed per action in `src/captcha/actions.ts` (no levels, no
+counters, no cookies). The same action always gets the same CAPTCHA.
+
+Gate an action with one line at the call site (the component must be a client component):
+
+```tsx
+const { requireCaptcha } = useCaptcha();
+if (!(await requireCaptcha("change-password"))) return;
+```
+
+`requireCaptcha(action, context?)` resolves `true` on pass and `false` on cancel or Escape. Optional `context` is
+`{ listingId }`. To gate a page on entry, mount a small client component that calls it on mount (see
+`src/app/rent/RentCaptchaGate.tsx`) so the page still prerenders.
+
+Add a CAPTCHA:
+
+1. Create `src/captcha/<id>/index.tsx` (plus `styles.module.css`) that default-exports a `Captcha`
+   (`{ id, Component }`, the component gets `{ onPass, onCancel, context }`). Multi-step ones compose rounds with
+   `RoundSequence`; rounds receive `{ onPass }`.
+2. Add one import and one line to `src/captcha/registry.ts`, alphabetical.
+3. Map an action to the id in `src/captcha/actions.ts`.
+
+Limits every CAPTCHA keeps:
+
+- Always solvable: use `useAttempts(onPass)` so the third failed attempt on a round passes anyway
+  ("Fine. You're too human to verify.").
+- The provider renders the modal with a visible Cancel, and Escape cancels. No `beforeunload`, no history changes.
+- Drag, rotate and slider mechanics have a keyboard path and a plain text label.
+- Dodging, drifting and fading check `prefers-reduced-motion` and fall back to static versions.
+- Everything is local React, CSS and SVG. No external scripts, no network calls, no real personal data.
 
 ## Hard limits (keep it demoable and safe)
 
