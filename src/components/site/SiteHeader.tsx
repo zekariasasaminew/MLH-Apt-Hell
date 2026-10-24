@@ -11,7 +11,7 @@ const leftLinks = [
   { label: "Buy", href: "/search?type=buy" },
   { label: "Rent", href: "/rent" },
   { label: "Sell", href: "/search?type=sell" },
-  { label: "Get a mortgage", href: "/apply" },
+  { label: "Get a mortgage", href: "/mortgage" },
   { label: "Find an agent", href: "/search?type=agent" },
 ];
 

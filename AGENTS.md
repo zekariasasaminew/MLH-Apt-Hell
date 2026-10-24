@@ -59,6 +59,7 @@ src/
     listing/[id]/           /listing/:id       (unclaimed placeholder)
     signin/                 /signin            (unclaimed placeholder)
     apply/                  /apply             (unclaimed placeholder)
+    mortgage/               /mortgage          standalone house-dragging mortgage challenge
   components/
     site/                   shared Zillow chrome: SiteHeader, SiteFooter, Logo, ListingCard, Placeholder
     home/                   homepage-only sections
@@ -74,6 +75,10 @@ src/
 ```
 
 ## Annoyance model
+
+The “Get a mortgage” navbar link opens `/mortgage`, which owns the tiny-house mortgage-contract challenge.
+Signup at `/signin` completes directly after the password challenge; mortgage approval is independent of account
+creation. `/apply` remains the separate property application route.
 
 There is no pain level, no tier and no configuration. Every annoyance is always on at full strength, from the first
 page load. Don't add a setting, a cookie-driven ramp or a gentler variant; if you are tempted to build a milder
