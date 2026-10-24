@@ -13,6 +13,7 @@ export function RotaryContact() {
   const [message, setMessage] = useState("");
   const gesture = useRef<{ digit: string; previous: number; total: number; target: number } | null>(null);
   const dial = useRef<HTMLDivElement>(null);
+  const [onCall, setOnCall] = useState(false);
   const audio = useRef<AudioContext | null>(null);
   function angle(x: number, y: number) {
     const rect = dial.current!.getBoundingClientRect();
@@ -59,7 +60,15 @@ export function RotaryContact() {
       <output aria-live="polite">{number || "No digits dialed"} ({number.length}/10)</output>
       <button type="button" onClick={() => { setNumber(""); setMessage("The operator erased the entire number. Please redial."); }}>Ask operator to erase mistakes (all digits)</button>
     </>
-    <button type="button" disabled={number.length !== 10} onClick={async () => { if (await requireCaptcha("contact-agent")) setMessage("Request simulated! Our agent will call you back sometime between yesterday and the heat death of the universe."); }}>Request a pretend callback</button>
+    <button type="button" disabled={number.length !== 10 || onCall} onClick={async () => {
+      if (!await requireCaptcha("contact-agent")) return;
+      const call = new Audio("/audio/tung-tung-sahur.mp3");
+      call.onended = () => { setOnCall(false); setMessage("Tung Tung Sahur hung up. Your rent question went unanswered."); };
+      call.onerror = () => { setOnCall(false); setMessage("Tung Tung Sahur hung up."); };
+      setOnCall(true);
+      setMessage("Connected to your agent, Tung Tung Sahur...");
+      call.play().catch(() => { setOnCall(false); setMessage("Tung Tung Sahur hung up before you could hear him."); });
+    }}>{onCall ? "On the line..." : "Call the agent about rent"}</button>
     <p role="status">{message}</p>
   </section>;
 }
