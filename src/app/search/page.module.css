@@ -1,38 +1,17 @@
 .main { min-height: calc(100vh - 80px); padding: 36px 24px 64px; background: var(--surface-grey); }
-.buy, .seller { max-width: 1200px; margin: auto; }
-.main h1 { font: 800 clamp(30px, 5vw, 52px)/1.15 var(--font-display); margin: 12px 0; }
-.main p { margin: 12px 0; }
+.seller { max-width: 760px; margin: auto; padding: 32px; background: white; border: 1px solid var(--border); border-radius: 14px; }
+.seller h1 { font: 800 clamp(30px, 5vw, 52px)/1.15 var(--font-display); margin: 12px 0; }
+.seller p { margin: 12px 0; }
 .eyebrow { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); }
-.filters { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; padding: 20px; margin: 28px 0; background: white; border: 1px solid var(--border); border-radius: 12px; }
-.field { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.field { display: grid; gap: 6px; margin: 24px 0; font-size: 14px; font-weight: 600; }
 .field input, .field select { min-height: 44px; max-width: 100%; padding: 10px; font: inherit; border: 1px solid var(--border-strong); border-radius: 6px; background: white; color: var(--ink); }
-.primary, .main button, .dialog button { display: inline-block; padding: 11px 16px; min-height: 44px; background: var(--blue); color: white; border: 0; border-radius: 6px; font: inherit; cursor: pointer; }
-.main button:disabled { opacity: .4; cursor: default; }
-.main button:focus-visible, .main a:focus-visible, .dialog button:focus-visible { outline: 3px solid #cb6f00; outline-offset: 3px; }
-.resultsHeading { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin: 28px 0; }
-.resultsHeading a { color: var(--blue); text-decoration: underline; }
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-.card { overflow: hidden; background: white; border-radius: 12px; box-shadow: var(--shadow-listing); border: 1px solid var(--border); }
-.photo { position: relative; aspect-ratio: 1.6; }
-.photo img { object-fit: cover; }
-.photo span { position: absolute; top: 12px; left: 12px; padding: 3px 10px; border-radius: 4px; background: #ffedb9; font-size: 12px; font-weight: 700; }
-.cardBody { padding: 20px; }
-.cardBody h2 { font-size: 28px; }
-.cardBody p { font-size: 14px; }
-.dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 30px; border: 1px solid var(--border); border-radius: 14px; color: var(--ink); }
-.dialog::backdrop { background: #101c3d99; }
-.dialog h2 { padding-right: 32px; }
-.dialog p { margin: 16px 0; }
-.dialog .close { position: absolute; top: 10px; right: 10px; background: white; color: var(--ink); font-size: 26px; padding: 0 12px; }
+.primary, .seller button { display: inline-block; padding: 11px 16px; min-height: 44px; margin: 8px 10px 8px 0; background: var(--blue); color: white; border: 0; border-radius: 6px; font: inherit; cursor: pointer; }
+.seller a { margin-right: 10px; }
+.seller button:disabled { opacity: .4; cursor: default; }
+.seller button:focus-visible, .seller a:focus-visible { outline: 3px solid #cb6f00; outline-offset: 3px; }
 .check { display: flex; align-items: start; gap: 10px; margin: 20px 0; }
 .check input { width: 20px; height: 20px; flex: none; }
-.note { font-size: 12px; color: var(--ink-muted); }
-.seller { max-width: 760px; padding: 32px; background: white; border: 1px solid var(--border); border-radius: 14px; }
-.seller .field { margin: 24px 0; }
-.seller button, .seller a { margin: 8px 10px 8px 0; }
 .quote { margin: 24px 0; padding: 24px; background: #edf3ff; border-radius: 10px; }
 .quote strong { display: block; font-size: 38px; line-height: 1.4; }
-.empty { text-align: center; padding: 48px 20px; background: white; border-radius: 12px; }
 .loading { padding: 40px; }
-@media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px) { .main { padding: 24px 12px; } .grid { grid-template-columns: 1fr; } .filters { display: grid; } .seller { padding: 20px; } .field { min-width: 0; } .resultsHeading { align-items: start; } }
+@media (max-width: 640px) { .main { padding: 24px 12px; } .seller { padding: 20px; } .field { min-width: 0; } }

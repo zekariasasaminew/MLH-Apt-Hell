@@ -1,11 +1,12 @@
+import type { MarketMode } from "@/data/property-market";
 import styles from "./GeocitiesBanner.module.css";
 
 /** The page is a 1999 fan site. Pairs with the .geo rules in geocities.module.css. */
-export function GeocitiesBanner() {
+export function GeocitiesBanner({ mode = "rent" }: { mode?: MarketMode }) {
   return (
     <div className={styles.banner} data-rent="geo-banner">
       <div className={styles.marquee}>
-        <span>*** WELCOME 2 HELLOW RENTALZ *** BEST APARTMENTZ ON THE WEB *** SIGN MY GUESTBOOK ***</span>
+        <span>*** WELCOME 2 HELLOW {mode === "buy" ? "HOMEZ FOR SALE" : "RENTALZ"} *** BEST {mode === "buy" ? "HOMEZ" : "APARTMENTZ"} ON THE WEB *** SIGN MY GUESTBOOK ***</span>
       </div>
       <div className={styles.row}>
         <span className={styles.construction}>UNDER CONSTRUCTION</span>

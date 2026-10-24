@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { listings } from "@/data/listings";
-import { money, salePrice } from "./market";
+import { money, salePrice } from "@/data/property-market";
 import styles from "./page.module.css";
 
 export function SellHome() {

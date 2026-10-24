@@ -1,5 +1,6 @@
 "use client";
 
+import { useMarket } from "../_lib/MarketContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -35,6 +36,7 @@ export function RentCard({
   onNavigate,
   cardRef,
 }: RentCardProps) {
+  const mode = useMarket();
   const [photoIndex, setPhotoIndex] = useState(0);
   const [saved, setSaved] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -93,7 +95,7 @@ export function RentCard({
 
       <div className={styles.body}>
         <div className={styles.priceRow}>
-          <span className={styles.price}>${rent.toLocaleString("en-US")}/mo</span>
+          <span className={styles.price}>${rent.toLocaleString("en-US")}{mode === "rent" ? "/mo" : ""}</span>
           <span className={styles.fees} data-swap={feeLabel ? "" : undefined}>
             <span className={styles.feesDefault}>Fees may apply</span>
             {feeLabel && <span className={styles.feesHover}>{feeLabel}</span>}
@@ -135,7 +137,7 @@ export function RentCard({
           <span>
             <b>{listing.sqft.toLocaleString("en-US")}</b> sqft
           </span>
-          <span>{listing.homeType === "Apartment" ? "Apartment for rent" : `${listing.homeType} for rent`}</span>
+          <span>{`${listing.homeType} for ${mode === "buy" ? "sale" : "rent"}`}</span>
         </div>
         <Link href={href} className={styles.link} onClick={onNavigate}>
           <address className={styles.address}>

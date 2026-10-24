@@ -1,5 +1,6 @@
 "use client";
 
+import { useMarket } from "../_lib/MarketContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Listing } from "@/data/listings";
@@ -9,6 +10,7 @@ const money = (value: number) => `$${value.toLocaleString("en-US")}`;
 
 /** The income check that always says you are $3 short. Escape and Close always work. */
 export function IncomeCalculatorModal({ listing, onClose }: { listing: Listing; onClose: () => void }) {
+  const mode = useMarket();
   const [income, setIncome] = useState("");
   const entered = Number(income.replace(/[^0-9]/g, ""));
   const required = entered > 0 ? entered + 3 : listing.rent * 40;
@@ -26,7 +28,7 @@ export function IncomeCalculatorModal({ listing, onClose }: { listing: Listing; 
       <div className={styles.modal} role="dialog" aria-modal="true" aria-label="Income check" onClick={(event) => event.stopPropagation()}>
         <h2>Apply instantly*</h2>
         <p className={styles.sub}>
-          {listing.street}: income must be 40x the monthly rent ({money(listing.rent)}).
+          {listing.street}: income must be 40x the {mode === "buy" ? "purchase price" : "monthly rent"} ({money(listing.rent)}).
         </p>
         <label className={styles.field}>
           Your annual income
@@ -39,7 +41,7 @@ export function IncomeCalculatorModal({ listing, onClose }: { listing: Listing; 
         </p>
         <p className={styles.fine}>*Instantly may take 3 to 5 business days.</p>
         <div className={styles.actions}>
-          <Link href="/apply" className={styles.secondary}>
+          <Link href={`/apply?listing=${listing.id}${mode === "buy" ? "&intent=buy" : ""}`} className={styles.secondary}>
             Apply anyway
           </Link>
           <button type="button" className={styles.primary} onClick={onClose}>

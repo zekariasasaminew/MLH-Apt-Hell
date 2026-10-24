@@ -142,9 +142,13 @@ Every effect is always on. Nothing is configurable.
 
 ## The rent filter contract
 
-Buy and Sell use the existing `/search?type=buy` and `/search?type=sell` navigation links. Buy search uses GET
-parameters (`q`, `city`, `saleMax`, `sort`); its fictional sale prices are derived from the demo rentals in
-`src/app/search/market.ts`. Sell only uses in-memory state and publishes nothing. Legacy `/search?type=rent`
+Buy and Sell use the existing `/search?type=buy` and `/search?type=sell` navigation links. Buy renders the same `RentPage` with `mode="buy"`, so its theme, map, cards, and annoyances stay in sync with Rent.
+Its URL filters use the same keys as Rent (`q`, `city`, `min`, `max`, `sort`, `page`); in Buy, `min` and `max` are
+purchase amounts. Fictional sale prices derive from demo rentals in `src/data/property-market.ts`.
+The shared filter hook retains `type=buy` while navigating `/search`. `MarketProvider` supplies display wording
+and the seven-digit purchase budget to child controls without changing `FilterControlProps`.
+Buy cards use `/listing/:id?intent=buy`; the shared details page reads that intent inside Suspense to show
+purchase pricing and retain intent on application links. Sell only uses in-memory state and publishes nothing. Legacy `/search?type=rent`
 links redirect to `/rent` while retaining their filters. Keep server search-parameter reads inside Suspense.
 
 All /rent filters live in the URL query string (`?city=moline-il&max=1200&sort=price-asc&page=2`), so Back, refresh

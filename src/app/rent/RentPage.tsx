@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { asPurchaseListing, purchaseListings, type MarketMode } from "@/data/property-market";
+import { MarketProvider } from "./_lib/MarketContext";
 import { cities, listings } from "@/data/listings";
 import { applyRentFilters, paginate, PAGE_SIZE, type RentFilters } from "@/filters/rent-filters";
 import { useRentFilters } from "@/filters/useRentFilters";
@@ -39,7 +41,11 @@ const AMNESIA_TARGETS: [keyof RentFilters, string][] = [
   ["q", "Location"],
 ];
 
-export function RentPage() {
+export function RentPage({ mode = "rent" }: { mode?: MarketMode }) {
+  return <MarketProvider mode={mode}><MarketResults key={mode} mode={mode} /></MarketProvider>;
+}
+
+function MarketResults({ mode }: { mode: MarketMode }) {
   const { filters, setFilters, clearFilters } = useRentFilters();
   const reducedMotion = useReducedMotion();
 
@@ -80,7 +86,7 @@ export function RentPage() {
   }, [reducedMotion, toast]);
 
   const sort = filters.sort === "recommended" ? "price-desc" : filters.sort;
-  const matching = useMemo(() => applyRentFilters(listings, { ...filters, sort }), [filters, sort]);
+  const matching = useMemo(() => applyRentFilters(mode === "buy" ? purchaseListings : listings, { ...filters, sort }), [filters, sort, mode]);
   const paged = paginate(matching, filters.page);
 
   const cardItems = useMemo<CardItem[]>(() => {
@@ -88,14 +94,16 @@ export function RentPage() {
     if (paged.page === 2) visible = seededShuffle(paginate(matching, 1).items, hashString(`page2:${matching.length}`));
     if (shuffleTick > 0) visible = seededShuffle(visible, hashString(`tick:${shuffleTick}`));
 
-    const items: CardItem[] = visible.map((listing) => ({ listing, href: `/listing/${listings[0].id}` }));
+    const intent = mode === "buy" ? "?intent=buy" : "";
+    const promoted = mode === "buy" ? promotedListings.map(asPurchaseListing) : promotedListings;
+    const items: CardItem[] = visible.map((listing) => ({ listing, href: `/listing/${listings[0].id}${intent}` }));
     let inserted = 0;
-    for (let position = 3; position <= items.length && inserted < promotedListings.length; position += 4) {
-      items.splice(position, 0, { listing: promotedListings[inserted], href: `/listing/${PROMOTED_LINK_TARGET}` });
+    for (let position = 3; position <= items.length && inserted < promoted.length; position += 4) {
+      items.splice(position, 0, { listing: promoted[inserted], href: `/listing/${PROMOTED_LINK_TARGET}${intent}` });
       inserted++;
     }
     return items;
-  }, [paged.items, paged.page, matching, shuffleTick]);
+  }, [paged.items, paged.page, matching, shuffleTick, mode]);
 
   const mapCenter = useMemo<[number, number]>(
     () => cities.find((city) => city.slug === filters.city)?.center ?? QUAD_CITIES,
@@ -135,7 +143,7 @@ export function RentPage() {
 
   return (
     <div className={`${styles.root} ${geo.geo}`} data-rent="root">
-      <GeocitiesBanner />
+      <GeocitiesBanner mode={mode} />
       <FilterBar filters={filters} setFilters={setFilters} onSaveSearch={() => setSaveOpen(true)} />
       <div className={styles.split}>
         <div className={`${styles.mapPane} ${mobileView === "map" ? styles.paneShown : ""}`}>

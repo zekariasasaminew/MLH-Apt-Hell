@@ -25,7 +25,9 @@ export function useRentFilters() {
 
   const navigate = useCallback(
     (next: RentFilters) => {
-      const qs = toSearchParams(next).toString();
+      const params = toSearchParams(next);
+      if (pathname === "/search") params.set("type", "buy");
+      const qs = params.toString();
       router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
     [router, pathname],
