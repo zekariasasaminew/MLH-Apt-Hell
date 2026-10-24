@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useCaptcha } from "@/captcha/CaptchaProvider";
 import styles from "./page.module.css";
 
 type Step = "entry" | "reason" | "paperwork" | "riddles" | "cats" | "hold" | "catch" | "confirm" | "success";
@@ -48,6 +49,7 @@ function normalize(value: string) {
 }
 
 export function CancelSubscriptionFlow({ onClose }: { onClose: () => void }) {
+  const { requireCaptcha } = useCaptcha();
   const [step, setStep] = useState<Step>("entry");
   const [riddleIndex, setRiddleIndex] = useState(0);
   const [answer, setAnswer] = useState("");
@@ -358,7 +360,10 @@ export function CancelSubscriptionFlow({ onClose }: { onClose: () => void }) {
             <button
               className={styles.dangerButton}
               disabled={normalize(confirmPhrase) !== "cancel 67" || !confirmChecked}
-              onClick={() => finalArmed ? setStep("success") : setFinalArmed(true)}
+              onClick={async () => {
+                if (!finalArmed) return setFinalArmed(true);
+                if (await requireCaptcha("cancel-subscription")) setStep("success");
+              }}
             >
               {finalArmed ? "YES, ACTUALLY EVICT MY SUBSCRIPTION" : "Confirm Cancellation (Allegedly)"}
             </button>
