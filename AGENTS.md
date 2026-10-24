@@ -60,6 +60,8 @@ src/
     signin/                 /signin            (unclaimed placeholder)
     apply/                  /apply             (unclaimed placeholder)
     mortgage/               /mortgage          standalone house-dragging mortgage challenge
+    spin/                   /spin              Gemma 4 listing spinner (photo in, euphemistic listing out)
+    api/spin/               POST /api/spin     the only server route; calls Gemma 4 via the Gemini API
   components/
     site/                   shared Zillow chrome: SiteHeader, SiteFooter, Logo, ListingCard, Placeholder
     home/                   homepage-only sections
@@ -216,7 +218,9 @@ Limits every CAPTCHA keeps:
 - Never trap the user for real: no infinite `alert()` loops, no disabling the browser back button, no
   `beforeunload` traps, nothing that freezes the tab. A judge must be able to leave or reset.
 - No real data collection. No real payment fields, no SSN/ID inputs that look real, no sending anything to any
-  external service. Fake forms keep their values in component state or cookies only.
+  external service. Fake forms keep their values in component state or cookies only. The one exception is `/spin`,
+  which sends the photo the user picks to the Gemini API (Gemma 4) and says so on the page; it needs
+  `GEMINI_API_KEY` (in `.env.local` locally, a Vercel env var in production) and falls back to canned copy without it.
 - No real Zillow assets: no Zillow logo, name in UI, photos or copied listing data. The brand is **Hellow**.
 - No sounds that autoplay at high volume, no flashing content (seizure risk).
 - Keep the footer disclaimer that Hellow is a parody not affiliated with Zillow.
